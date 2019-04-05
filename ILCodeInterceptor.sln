@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.489
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HarmonyTest", "HarmonyTest\HarmonyTest.csproj", "{88E185BA-B1B2-4265-9255-4DD10F6CBB7C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StandardCode", "StandardCode\StandardCode.csproj", "{CA00DD1F-E3F6-4D31-8743-35BC22BCF7FD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{88E185BA-B1B2-4265-9255-4DD10F6CBB7C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{88E185BA-B1B2-4265-9255-4DD10F6CBB7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{88E185BA-B1B2-4265-9255-4DD10F6CBB7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{88E185BA-B1B2-4265-9255-4DD10F6CBB7C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA00DD1F-E3F6-4D31-8743-35BC22BCF7FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA00DD1F-E3F6-4D31-8743-35BC22BCF7FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA00DD1F-E3F6-4D31-8743-35BC22BCF7FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA00DD1F-E3F6-4D31-8743-35BC22BCF7FD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1D416375-1A47-47DC-B0FE-1A9BA22D631D}
+	EndGlobalSection
+EndGlobal
