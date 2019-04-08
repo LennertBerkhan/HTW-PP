@@ -36,7 +36,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony, Version=1.2.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\Release\net45\0Harmony.dll</HintPath>
+      <HintPath>..\..\..\..\..\Desktop\Master\2. Semester\Forschung\Online\Harmony\Release\net45\0Harmony.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -58,9 +58,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Luisa\Planner.csproj">
-      <Project>{7c806059-fa8c-4664-bf6f-32bbf63fafff}</Project>
-      <Name>Planner</Name>
+    <ProjectReference Include="..\Designer\Designer.csproj">
+      <Project>{9542217f-2ea5-44a9-a294-b6ea03322025}</Project>
+      <Name>Designer</Name>
     </ProjectReference>
     <ProjectReference Include="..\StandardCode\StandardCode.csproj">
       <Project>{ca00dd1f-e3f6-4d31-8743-35bc22bcf7fd}</Project>
