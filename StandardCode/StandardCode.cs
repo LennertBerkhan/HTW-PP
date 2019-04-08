@@ -6,7 +6,7 @@ namespace StandardCode
     {
         public void DoSomething()
         {
-            IPlan n = new Plan();
+            IPlan n = new Plan(); // kann aber auch Plan sein 
 
             n.AddQuantity(1);
             n.AddQuantity(4);
