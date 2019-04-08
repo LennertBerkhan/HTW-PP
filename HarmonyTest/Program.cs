@@ -14,7 +14,7 @@ namespace HarmonyTest
 
             
 
-            Console.WriteLine("Hallo Luisa");
+            Console.WriteLine(""); 
             Console.WriteLine("--- Applying Aspects ---");
             Console.WriteLine("");
             Console.ReadKey();
