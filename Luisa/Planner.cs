@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Luisa
+namespace PlannerClasses 
 {
-    public class PlannerLuisa
+    public class Planner
     {
         public void plan ()
         {
@@ -24,11 +24,11 @@ namespace Luisa
 
         public bool setTask(int _id, int _startTime, int _duration)
         {
-            _id = id;
-            _startTime = startTime;
-            _duration = duration;
-            endTime = _startTime + _duration;
-            Console.WriteLine("setTast::\tid:{0};startTime{1};duration:{2};endTime:{3}");
+            id = _id;
+            startTime = _startTime;
+            duration = _duration;
+            endTime = startTime + duration;
+            Console.WriteLine("setTast::\tid:{0};\tstartTime{1};\tduration:{2};\tendTime:{3}", id, startTime, duration, endTime);
             return true;
         }
 

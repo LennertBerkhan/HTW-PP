@@ -2,6 +2,7 @@ using Harmony;
 using StandardCode;
 using System;
 using System.Reflection;
+using PlannerClasses; 
 
 namespace HarmonyTest
 {
@@ -30,7 +31,26 @@ namespace HarmonyTest
             /// Check if methods are applied and return result
             return harmony.HasAnyPatches("StandardCode.V1");
         }
-        
+
+        public static bool Apply2()
+        {
+            /// Create a Harmony Instance that has an unique name
+            var harmony = HarmonyInstance.Create("DurationNotNegativ");
+            /// get the method to override
+            var original = typeof(Operation).GetMethod("setTask");
+
+            /// gather the methodInfos for patching
+            var prefix = typeof(Aspect).GetMethod("BeforeCall2");
+            //var postfix = typeof(Aspect).GetMethod("AfterCall");
+
+            /// Patch the method (Apply the aspect)
+            harmony.Patch(original, new HarmonyMethod(prefix));
+
+            /// Check if methods are applied and return result
+            return harmony.HasAnyPatches("DurationNotNegativ");
+        }
+
+
         /// <summary>
         /// Intercepts the Specified Method, gaining its instance and Property to modify
         /// </summary>
@@ -53,6 +73,17 @@ namespace HarmonyTest
             string val = (string)strGetter.Invoke(__instance, null);
             Console.WriteLine(" -" + val);
         }
+
+        public static void BeforeCall2(Operation __instance, int _id, int _duration )
+        {
+            Console.WriteLine("-- Begin Interception: Before Methode is called --");
+            //Console.WriteLine("  -My method parameter for 'id'{0} is the 'duration'{1}",_id, _duration );
+            if(_duration < 0)
+            {
+                Console.WriteLine("Planning error: duration time from ID {0} is negativ.", _id);
+            }
+        }
+
         /// <summary>
         /// Aspect after method call, catch the result
         /// </summary>
@@ -64,6 +95,7 @@ namespace HarmonyTest
             Console.WriteLine("--- End Interception ---", "Aspect");
             Console.WriteLine("", "Aspect");
         }
+
 
        
     }

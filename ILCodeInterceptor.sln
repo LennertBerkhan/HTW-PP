@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HarmonyTest", "HarmonyTest\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StandardCode", "StandardCode\StandardCode.csproj", "{CA00DD1F-E3F6-4D31-8743-35BC22BCF7FD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luisa", "Luisa\Luisa.csproj", "{7C806059-FA8C-4664-BF6F-32BBF63FAFFF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Planner", "Luisa\Planner.csproj", "{7C806059-FA8C-4664-BF6F-32BBF63FAFFF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

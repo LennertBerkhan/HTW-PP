@@ -1,7 +1,7 @@
 ﻿
 using StandardCode;
 using System;
-using Luisa; 
+using PlannerClasses; 
 
 namespace HarmonyTest
 {
@@ -24,9 +24,14 @@ namespace HarmonyTest
 
             //worker.DoSomething();
 
-            var plannerLuisa = new PlannerLuisa();
-            plannerLuisa.plan();
-            Console.ReadKey(); 
+            var planner = new Planner();
+            planner.plan();
+            Console.ReadKey();
+            
+            if (!Aspect.Apply2()) throw new Exception("Applying aspect failed");
+            planner.plan();
+            Console.ReadKey();
+
         }
     }
 }
