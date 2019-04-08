@@ -12,8 +12,9 @@ namespace HarmonyTest
             var worker = new Worker();
             worker.DoSomething();
 
+            
 
-            Console.WriteLine("");
+            Console.WriteLine("Hallo Luisa");
             Console.WriteLine("--- Applying Aspects ---");
             Console.WriteLine("");
             Console.ReadKey();
