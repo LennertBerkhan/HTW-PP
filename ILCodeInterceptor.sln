@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HarmonyTest", "HarmonyTest\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StandardCode", "StandardCode\StandardCode.csproj", "{CA00DD1F-E3F6-4D31-8743-35BC22BCF7FD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lennert", "Lennert\Lennert.csproj", "{CA8AA29F-00F1-4A57-9DEC-70C24AE4BF28}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{CA00DD1F-E3F6-4D31-8743-35BC22BCF7FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CA00DD1F-E3F6-4D31-8743-35BC22BCF7FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CA00DD1F-E3F6-4D31-8743-35BC22BCF7FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA8AA29F-00F1-4A57-9DEC-70C24AE4BF28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA8AA29F-00F1-4A57-9DEC-70C24AE4BF28}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA8AA29F-00F1-4A57-9DEC-70C24AE4BF28}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA8AA29F-00F1-4A57-9DEC-70C24AE4BF28}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -6,8 +6,8 @@ using System.Reflection;
 namespace HarmonyTest
 {
     public class Aspect {
-
-        private  static  object PrefixRuntime = CodeGenerator.Gernerate();
+        //Erstmal ohne Code Generator
+        //private  static  object PrefixRuntime = CodeGenerator.Gernerate();
 
         /// <summary>
         /// Applying Aspects to a Methods
@@ -17,7 +17,7 @@ namespace HarmonyTest
         {
             /// Create a Harmony Instance that has an unique name
             var harmony = HarmonyInstance.Create("StandardCode.V1");
-            /// get the mothod to override
+            /// get the method to override
             var original = typeof(Plan).GetMethod("AddQuantity");
 
             /// gather the methodInfos for patching
@@ -43,7 +43,7 @@ namespace HarmonyTest
             Console.WriteLine("  -My method parameter 'number' is " + number, "Aspect");
 
             // Test to access Runtime generated Code.
-            PrefixRuntime.GetType().GetMethod("Prefix").Invoke(null, new object[] { number });
+            //PrefixRuntime.GetType().GetMethod("Prefix").Invoke(null, new object[] { number });
 
 
             // Even Private properties are accessable through reflection.
