@@ -27,7 +27,7 @@ namespace HarmonyTest
 
             /// Patch the method (Apply the aspect)
             harmony.Patch(original, new HarmonyMethod(prefix), new HarmonyMethod(postfix));
-
+            
             /// Check if methods are applied and return result
             return harmony.HasAnyPatches("StandardCode.V1");
         }
@@ -36,15 +36,18 @@ namespace HarmonyTest
         {
             /// Create a Harmony Instance that has an unique name
             var harmony = HarmonyInstance.Create("DurationNotNegativ");
+
+            //harmony.PatchAll(Assembly.GetExecutingAssembly());
+
             /// get the method to override
             var original = typeof(Operation).GetMethod("setTask");
 
             /// gather the methodInfos for patching
             var prefix = typeof(Aspect).GetMethod("BeforeCall2");
-            //var postfix = typeof(Aspect).GetMethod("AfterCall");
+            var postfix = typeof(Aspect).GetMethod("AfterCall2");
 
             /// Patch the method (Apply the aspect)
-            harmony.Patch(original, new HarmonyMethod(prefix));
+            harmony.Patch(original, new HarmonyMethod(prefix), new HarmonyMethod(postfix));
 
             /// Check if methods are applied and return result
             return harmony.HasAnyPatches("DurationNotNegativ");
@@ -74,14 +77,18 @@ namespace HarmonyTest
             Console.WriteLine(" -" + val);
         }
 
-        public static void BeforeCall2(Operation __instance, int _id, int _duration )
+        public static void BeforeCall2(int _id, int _duration )
         {
-            Console.WriteLine("-- Begin Interception: Before Methode is called --");
-            //Console.WriteLine("  -My method parameter for 'id'{0} is the 'duration'{1}",_id, _duration );
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            
             if(_duration < 0)
             {
+                Console.ForegroundColor = ConsoleColor.DarkRed;
                 Console.WriteLine("Planning error: duration time from ID {0} is negativ.", _id);
+                Console.ForegroundColor = ConsoleColor.White;
             }
+            
+            Console.ForegroundColor = ConsoleColor.White;
         }
 
         /// <summary>
@@ -96,7 +103,20 @@ namespace HarmonyTest
             Console.WriteLine("", "Aspect");
         }
 
+        public static void AfterCall2(Operation __instance)
+        {
+            
+            
 
+            if(1 < 2)
+            {
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+                Console.WriteLine("Planning error: duration time from ID {0} is negativ.", val);
+                Console.ForegroundColor = ConsoleColor.White;
+            }
+            
+            
+        }
        
     }
 }

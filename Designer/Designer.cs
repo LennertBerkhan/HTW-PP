@@ -18,9 +18,9 @@ namespace Designer
     public class Operation
     {
         int id;
-        int startTime;
-        private int endTime;
-        int duration;
+        int startTime = 0;
+        private int EndTime { get; set; } = 0;
+        int duration = 0;
 
         public bool setTask(int _id, int _startTime, int _duration)
         {
