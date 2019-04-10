@@ -104,17 +104,7 @@ namespace HarmonyTest
         }
 
         public static void AfterCall2(Operation __instance)
-        {
-            
-            
-
-            if(1 < 2)
-            {
-                Console.ForegroundColor = ConsoleColor.DarkRed;
-                Console.WriteLine("Planning error: duration time from ID {0} is negativ.", val);
-                Console.ForegroundColor = ConsoleColor.White;
-            }
-            
+        {         
             
         }
        

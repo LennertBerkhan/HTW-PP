@@ -19,7 +19,7 @@ namespace Designer
     {
         int id;
         int startTime = 0;
-        private int EndTime { get; set; } = 0;
+        private int EndTime = 0;
         int duration = 0;
 
         public bool setTask(int _id, int _startTime, int _duration)
