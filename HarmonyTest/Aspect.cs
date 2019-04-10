@@ -2,11 +2,12 @@ using Harmony;
 using StandardCode;
 using System;
 using System.Reflection;
-using Designer; 
+using Designer;
 
 namespace HarmonyTest
 {
-    public class Aspect {
+    public class Aspect
+    {
         //Erstmal ohne Code Generator
         //private  static  object PrefixRuntime = CodeGenerator.Gernerate();
 
@@ -22,12 +23,12 @@ namespace HarmonyTest
             var original = typeof(Plan).GetMethod("AddQuantity");
 
             /// gather the methodInfos for patching
-            var prefix =  typeof(Aspect).GetMethod("BeforeCall");
+            var prefix = typeof(Aspect).GetMethod("BeforeCall");
             var postfix = typeof(Aspect).GetMethod("AfterCall");
 
             /// Patch the method (Apply the aspect)
             harmony.Patch(original, new HarmonyMethod(prefix), new HarmonyMethod(postfix));
-            
+
             /// Check if methods are applied and return result
             return harmony.HasAnyPatches("StandardCode.V1");
         }
@@ -77,18 +78,25 @@ namespace HarmonyTest
             Console.WriteLine(" -" + val);
         }
 
-        public static void BeforeCall2(int _id, int _duration )
+        public static void BeforeCall2(int _id, int _startTime, int _duration, Operation _predecessor, Machine _machId)
         {
             Console.ForegroundColor = ConsoleColor.DarkRed;
-            
-            if(_duration < 0)
+
+            if (_duration < 0)
             {
-                Console.ForegroundColor = ConsoleColor.DarkRed;
                 Console.WriteLine("Planning error: duration time from ID {0} is negativ.", _id);
-                Console.ForegroundColor = ConsoleColor.White;
+
             }
-            
+
+            if (_startTime < _predecessor.getEndTime())
+            {
+                Console.WriteLine("Planning error: overalpping production times for ID {0} and ID {1}", _id, _predecessor.getId());
+            }
+
+
+
             Console.ForegroundColor = ConsoleColor.White;
+
         }
 
         /// <summary>
@@ -104,9 +112,10 @@ namespace HarmonyTest
         }
 
         public static void AfterCall2(Operation __instance)
-        {         
-            
+        {
+            Console.WriteLine(" -After Method is Called {0}", __instance.getEndTime());
+            // Console.WriteLine(" Result was " + endTime, "Aspect");
         }
-       
+
     }
 }
