@@ -82,6 +82,7 @@ namespace HarmonyTest
         {
             Console.ForegroundColor = ConsoleColor.DarkRed;
 
+            Console.WriteLine(""); 
             if (_duration < 0)
             {
                 Console.WriteLine("Planning error: duration time from ID {0} is negativ.", _id);
@@ -113,7 +114,7 @@ namespace HarmonyTest
 
         public static void AfterCall2(Operation __instance)
         {
-            Console.WriteLine(" -After Method is Called {0}", __instance.getEndTime());
+            Console.WriteLine(" -After Method- Endtime of the Operation is: {0}", __instance.getEndTime());
             // Console.WriteLine(" Result was " + endTime, "Aspect");
         }
 
