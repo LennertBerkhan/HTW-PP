@@ -39,6 +39,9 @@ namespace Designer
             duration = _duration;
             endTime = startTime + duration;
             machId = _machId;
+            predecessor = _predecessor;
+
+            machId.setEntry(this);
 
             Console.WriteLine("setTast::\tid:{0};\tstartTime{1};\tduration:{2};\tendTime:{3}", id, startTime, duration, endTime);
             return true;
@@ -64,6 +67,11 @@ namespace Designer
         public Machine (int _id,string _name) {
             id = _id;
             name = _name;
+        }
+
+        public void setEntry (Operation op)
+        {
+            workload.Add(op);
         }
     }
 }
