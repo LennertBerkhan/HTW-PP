@@ -22,8 +22,8 @@ namespace Designer
 
     public class Operation
     {
-        int id;
-        int startTime = 0;
+        int id { get; set; }
+        int startTime { get; set; } = 0;
         private int endTime { get; set; } = 0;
         int duration = 0;
         Operation predecessor;
@@ -41,9 +41,9 @@ namespace Designer
             machId = _machId;
             predecessor = _predecessor;
 
-            machId.setEntry(this);
-
             Console.WriteLine("setTast::\tid:{0};\tstartTime{1};\tduration:{2};\tendTime:{3}", id, startTime, duration, endTime);
+
+            machId.setEntry(this);
             return true;
         }
         
@@ -62,7 +62,7 @@ namespace Designer
     {
         int id;
         string name;
-        List<Operation> workload;
+        private List<Operation> workload { get; set; } = new List<Operation>();
 
         public Machine (int _id,string _name) {
             id = _id;

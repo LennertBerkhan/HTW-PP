@@ -2,6 +2,7 @@ using Harmony;
 using System;
 using System.Reflection;
 using Designer;
+using System.Collections.Generic;
 
 namespace HarmonyTest
 {
@@ -40,7 +41,7 @@ namespace HarmonyTest
             //CONSTRAINT =>  context: Operation inv: _duration > 0
             if (_duration < 0)
             {
-                Console.WriteLine("Planning error: duration time from ID {0} is negativ.", _id);
+                Console.WriteLine("PLANNING ERROR: Duration time from ID {0} is negativ.", _id);
             }
             Console.ForegroundColor = ConsoleColor.White;
         }
@@ -51,15 +52,11 @@ namespace HarmonyTest
         /// <param name="__result">Return value of the Parameter</param>
         public static void AfterCall(Operation __instance)
         {
-            Console.WriteLine(" -After Method- Endtime of the Operation is: {0}", __instance.getEndTime());
-            // Console.WriteLine(" Result was " + endTime, "Aspect");
-            
             // Even Private properties are accessable through reflection.
             PropertyInfo strProperty =
             __instance.GetType().GetProperty("endTime", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.GetProperty);
             MethodInfo strGetter = strProperty.GetGetMethod(nonPublic: true);
             int val = (int)strGetter.Invoke(__instance, null);
-            Console.WriteLine("Private int -" + val);       
         }
     }
 
@@ -82,14 +79,108 @@ namespace HarmonyTest
             //CONSTRAINT =>  context: Operation inv: _startTime < predecessor.getEndtime()
             if (_startTime < _predecessor.getEndTime())
             {
-                Console.WriteLine("Planning error: overalpping production times for ID {0} and ID {1}", _id, _predecessor.getId());
+                Console.WriteLine("PLANNING ERROR: Overalpping production times for ID {0} and ID {1}", _id, _predecessor.getId());
             }
             Console.ForegroundColor = ConsoleColor.White;
         }
 
         public static void AfterCall(Operation __instance)
         {
+            Console.ForegroundColor = ConsoleColor.DarkRed;
             //SPACE FOR CODE
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+    }
+
+    public class MachineNotFree
+    {
+        public static bool Apply()
+        {
+            var harmony = HarmonyInstance.Create("MachineNotFree");
+            var original = typeof(Machine).GetMethod("setEntry");
+            var prefix = typeof(MachineNotFree).GetMethod("BeforeCall");
+            var postfix = typeof(MachineNotFree).GetMethod("AfterCall");
+            harmony.Patch(original, new HarmonyMethod(prefix), new HarmonyMethod(postfix));
+
+            return harmony.HasAnyPatches("MachineNotFree");
+        }
+
+        public static void BeforeCall(Machine __instance, Operation op)
+        {
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.WriteLine("Machine Not Free");
+
+            PropertyInfo prop = __instance.GetType().GetProperty("workload", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.GetProperty);
+            MethodInfo methInf = prop.GetGetMethod(nonPublic: true);
+            List<Operation> workload = new List<Operation>();
+            workload = (List<Operation>)methInf.Invoke(__instance, null);
+
+            prop = op.GetType().GetProperty("startTime", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.GetProperty);
+            methInf = prop.GetGetMethod(nonPublic: true);
+            int startTimeToAdd = (int)methInf.Invoke(op, null);
+
+            prop = op.GetType().GetProperty("endTime", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.GetProperty);
+            methInf = prop.GetGetMethod(nonPublic: true);
+            int endTimeToAdd = (int)methInf.Invoke(op, null);
+
+            int startTime, endTime;
+
+            foreach (Operation o in workload)
+            {
+                prop = o.GetType().GetProperty("startTime", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.GetProperty);
+                methInf = prop.GetGetMethod(nonPublic: true);
+                startTime = (int)methInf.Invoke(o, null);
+
+                prop = o.GetType().GetProperty("endTime", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.GetProperty);
+                methInf = prop.GetGetMethod(nonPublic: true);
+                endTime = (int)methInf.Invoke(o, null);
+
+                if(startTimeToAdd > startTime && startTimeToAdd < endTime)
+                {
+                    Console.WriteLine("PLANNING ERROR: Start time from Operation-ID {0} is within other production time.", op.getId());
+                }   
+                
+                if(endTimeToAdd > startTime && endTimeToAdd < endTime)
+                {
+                    Console.WriteLine("PLANNING ERROR: End time from Operation-ID {0} is within other production time.", op.getId());
+                }
+            }
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+
+        public static void AfterCall(Machine __instance)
+        {
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            //SPACE FOR CODE
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+    }
+
+    public class TEMPLATE
+    {
+        public static bool Apply()
+        {
+            var harmony = HarmonyInstance.Create("TEMPLATE");
+            var original = typeof(Machine).GetMethod("<METHODENAME>");
+            var prefix = typeof(MachineNotFree).GetMethod("BeforeCall");
+            var postfix = typeof(MachineNotFree).GetMethod("AfterCall");
+            harmony.Patch(original, new HarmonyMethod(prefix), new HarmonyMethod(postfix));
+
+            return harmony.HasAnyPatches("TEMPLATE");
+        }
+
+        public static void BeforeCall()
+        {
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            //SPACE FOR CODE
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+
+        public static void AfterCall(Operation __instance)
+        {
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            //SPACE FOR CODE
+            Console.ForegroundColor = ConsoleColor.White;
         }
     }
 }
