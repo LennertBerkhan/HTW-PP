@@ -6,6 +6,18 @@ using System.Collections.Generic;
 
 namespace HarmonyTest
 {
+    public class Tools
+    {
+        public dynamic getValue(dynamic instance, string variableName)
+        {
+            PropertyInfo prop = instance.GetType().GetProperty(variableName, BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.GetProperty);
+            MethodInfo methInf = prop.GetGetMethod(nonPublic: true);
+            dynamic workload = methInf.Invoke(instance, null);
+
+            return workload;
+        }
+    }
+
     public class DurationNotNegativ
     {
         //private  static  object PrefixRuntime = CodeGenerator.Gernerate();
@@ -79,7 +91,7 @@ namespace HarmonyTest
             //CONSTRAINT =>  context: Operation inv: _startTime < predecessor.getEndtime()
             if (_startTime < _predecessor.getEndTime())
             {
-                Console.WriteLine("PLANNING ERROR: Overalpping production times for ID {0} and ID {1}", _id, _predecessor.getId());
+                Console.WriteLine("PLANNING ERROR: Overlapping production times for ID {0} and ID {1}", _id, _predecessor.getId());
             }
             Console.ForegroundColor = ConsoleColor.White;
         }
@@ -108,32 +120,17 @@ namespace HarmonyTest
         public static void BeforeCall(Machine __instance, Operation op)
         {
             Console.ForegroundColor = ConsoleColor.DarkRed;
-            Console.WriteLine("Machine Not Free");
-
-            PropertyInfo prop = __instance.GetType().GetProperty("workload", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.GetProperty);
-            MethodInfo methInf = prop.GetGetMethod(nonPublic: true);
-            List<Operation> workload = new List<Operation>();
-            workload = (List<Operation>)methInf.Invoke(__instance, null);
-
-            prop = op.GetType().GetProperty("startTime", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.GetProperty);
-            methInf = prop.GetGetMethod(nonPublic: true);
-            int startTimeToAdd = (int)methInf.Invoke(op, null);
-
-            prop = op.GetType().GetProperty("endTime", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.GetProperty);
-            methInf = prop.GetGetMethod(nonPublic: true);
-            int endTimeToAdd = (int)methInf.Invoke(op, null);
-
+            Tools tools = new Tools();
             int startTime, endTime;
+
+            List<Operation> workload = tools.getValue(__instance, "workload"); 
+            int startTimeToAdd = tools.getValue(op, "startTime");
+            int endTimeToAdd = tools.getValue(op, "endTime");
 
             foreach (Operation o in workload)
             {
-                prop = o.GetType().GetProperty("startTime", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.GetProperty);
-                methInf = prop.GetGetMethod(nonPublic: true);
-                startTime = (int)methInf.Invoke(o, null);
-
-                prop = o.GetType().GetProperty("endTime", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.GetProperty);
-                methInf = prop.GetGetMethod(nonPublic: true);
-                endTime = (int)methInf.Invoke(o, null);
+                startTime = tools.getValue(o, "startTime");
+                endTime = tools.getValue(o, "endTime");
 
                 if(startTimeToAdd > startTime && startTimeToAdd < endTime)
                 {

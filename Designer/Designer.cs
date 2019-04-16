@@ -41,7 +41,7 @@ namespace Designer
             machId = _machId;
             predecessor = _predecessor;
 
-            Console.WriteLine("setTast::\tid:{0};\tstartTime{1};\tduration:{2};\tendTime:{3}", id, startTime, duration, endTime);
+            Console.WriteLine("setTask::\tid:{0};\tstartTime{1};\tduration:{2};\tendTime:{3}", id, startTime, duration, endTime);
 
             machId.setEntry(this);
             return true;
