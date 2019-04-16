@@ -7,8 +7,10 @@ namespace Designer
     {
         public void plan()
         {
-            Machine m1 = new Machine(1, "Bohrer");
-            Machine m2 = new Machine(2, "Fräser");
+
+
+            Machine m1 = new Machine(1, "Bohrer",50);
+            Machine m2 = new Machine(2, "Fräser",10);
 
             Operation op0 = new Operation(0, 0);
             Operation op1 = new Operation();
@@ -40,9 +42,9 @@ namespace Designer
             endTime = startTime + duration;
             machId = _machId;
             predecessor = _predecessor;
-
+            
             Console.WriteLine("setTask::\tid:{0};\tstartTime{1};\tduration:{2};\tendTime:{3}", id, startTime, duration, endTime);
-
+            
             machId.setEntry(this);
             return true;
         }
@@ -52,11 +54,13 @@ namespace Designer
     {
         private int id;
         private string name;
+        private int capacity;
         private List<Operation> workload { get; set; } = new List<Operation>();
 
-        public Machine (int _id,string _name) {
+        public Machine (int _id,string _name, int _capa) {
             id = _id;
             name = _name;
+            capacity = _capa;
         }
 
         public void setEntry (Operation op)

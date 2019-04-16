@@ -8,6 +8,7 @@ namespace HarmonyTest
 {
     public class Tools
     {
+        //Help method for getting value of private variables
         public dynamic getValue(dynamic instance, string variableName)
         {
             PropertyInfo prop = instance.GetType().GetProperty(variableName, BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.GetProperty);
@@ -47,7 +48,7 @@ namespace HarmonyTest
             return harmony.HasAnyPatches("DurationNotNegativ");
         }
 
-        public static void BeforeCall(int _id, int _startTime, int _duration, Operation _predecessor, Machine _machId)
+        public static void BeforeCall(int _id, int _duration)
         {
             Console.ForegroundColor = ConsoleColor.DarkRed;
             //CONSTRAINT =>  context: Operation inv: _duration > 0
@@ -157,6 +158,7 @@ namespace HarmonyTest
 
     public class TEMPLATE
     {
+        static Tools tools = new Tools();
         public static bool Apply()
         {
             var harmony = HarmonyInstance.Create("TEMPLATE");
