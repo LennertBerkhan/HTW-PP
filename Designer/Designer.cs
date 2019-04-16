@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Designer
 {
@@ -38,15 +39,11 @@ namespace Designer
             duration = _duration;
             endTime = startTime + duration;
             machId = _machId;
-            machId.setTimetable(startTime, endTime);
+
             Console.WriteLine("setTast::\tid:{0};\tstartTime{1};\tduration:{2};\tendTime:{3}", id, startTime, duration, endTime);
             return true;
         }
         
-        private void test()
-        {
-            Console.WriteLine("test");
-        }
         public int getEndTime()
         {
             return endTime; 
@@ -62,25 +59,11 @@ namespace Designer
     {
         int id;
         string name;
-        int[,] timetable = new int[10,2];
-        private int counter = 0;
+        List<Operation> workload;
 
         public Machine (int _id,string _name) {
             id = _id;
             name = _name;
-        }
-
-        public bool setTimetable (int _st, int _et)
-        {
-            timetable[counter, 0] = _st;
-            timetable[counter, 1] = _et;
-            counter++;
-            return true;
-        }
-
-        public int[,] getTimetable()
-        {
-            return timetable;
         }
     }
 }

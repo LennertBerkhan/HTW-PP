@@ -11,8 +11,8 @@ namespace HarmonyTest
             planner.plan();
             Console.ReadKey();
             
-            if (!Aspect.Apply()) throw new Exception("Applying aspect failed");
-            if (!Aspect.Apply2()) throw new Exception("Applying aspect failed");
+            if (!DurationNotNegativ.Apply()) throw new Exception("Applying aspect failed");
+            if (!OverlappingProdTime.Apply()) throw new Exception("Applying aspect failed");
 
             planner.plan();
             Console.ReadKey();
