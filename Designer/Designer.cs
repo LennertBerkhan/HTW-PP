@@ -7,9 +7,8 @@ namespace Designer
     {
         public void plan()
         {
-
-
-            Machine m1 = new Machine(1, "Bohrer",50);
+            
+            Machine m1 = new Machine(1, "Bohrer",15);
             Machine m2 = new Machine(2, "Fräser",10);
 
             Operation op0 = new Operation(0, 0);
@@ -27,7 +26,7 @@ namespace Designer
         private int id { get; set; }
         private int startTime { get; set; } = 0;
         private int endTime { get; set; } = 0;
-        private int duration = 0;
+        private int duration { get; set; } = 0;
         private Operation predecessor;
         private Machine machId;
 
@@ -52,9 +51,9 @@ namespace Designer
 
     public class Machine
     {
-        private int id;
-        private string name;
-        private int capacity;
+        private int id { get; set; }
+        private string name { get; set; }
+        private int capacity { get; set; }
         private List<Operation> workload { get; set; } = new List<Operation>();
 
         public Machine (int _id,string _name, int _capa) {

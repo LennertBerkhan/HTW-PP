@@ -22,7 +22,7 @@ namespace HarmonyTest
     public class DurationNotNegativ
     {
         //private  static  object PrefixRuntime = CodeGenerator.Gernerate();
-        
+
         /// <summary>
         /// Applying Aspects to a Methods
         /// </summary>
@@ -126,7 +126,7 @@ namespace HarmonyTest
             Console.ForegroundColor = ConsoleColor.DarkRed;
 
             int startTime, endTime;
-            List<Operation> workload = tools.getValue(__instance, "workload"); 
+            List<Operation> workload = tools.getValue(__instance, "workload");
             int startTimeToAdd = tools.getValue(op, "startTime");
             int endTimeToAdd = tools.getValue(op, "endTime");
 
@@ -139,7 +139,7 @@ namespace HarmonyTest
                 {
                     Console.WriteLine("PLANNING ERROR: Start time from Operation-ID {0} is within other production time.", tools.getValue(op, "id").ToString());
                 }
-                if(endTimeToAdd > startTime && endTimeToAdd < endTime)
+                if (endTimeToAdd > startTime && endTimeToAdd < endTime)
                 {
                     Console.WriteLine("PLANNING ERROR: End time from Operation-ID {0} is within other production time.", tools.getValue(op, "id").ToString());
                 }
@@ -155,6 +155,53 @@ namespace HarmonyTest
             Console.ForegroundColor = ConsoleColor.White;
         }
     }
+
+    public class CapacityCheck
+    {
+        static Tools tools = new Tools();
+        public static bool Apply()
+        {
+            var harmony = HarmonyInstance.Create("CapacityCheck");
+            var original = typeof(Machine).GetMethod("setEntry");
+            var prefix = typeof(CapacityCheck).GetMethod("BeforeCall");
+            var postfix = typeof(CapacityCheck).GetMethod("AfterCall");
+            harmony.Patch(original, new HarmonyMethod(prefix), new HarmonyMethod(postfix));
+
+            return harmony.HasAnyPatches("CapacityCheck");
+        }
+
+        public static void BeforeCall()
+        {
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+
+        public static void AfterCall(Machine __instance, Operation op)
+        {
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            int duration;
+            int sum = 0;
+            int capaSum = tools.getValue(__instance, "capacity");
+            List<Operation> workload = tools.getValue(__instance, "workload");
+
+            foreach (Operation o in workload)
+            {
+                duration = tools.getValue(o, "duration");
+                sum = sum + duration;
+                if (sum > capaSum)
+                {
+                    Console.WriteLine("CAPACITY ERROR: Operation {0} cannot be manufactured on Machine {1}", tools.getValue(op,"id").ToString(), tools.getValue(__instance, "name"));
+                }
+            }
+
+
+
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+    }
+
+
+
 
     public class TEMPLATE
     {
