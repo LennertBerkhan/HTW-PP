@@ -22,12 +22,12 @@ namespace Designer
 
     public class Operation
     {
-        int id { get; set; }
-        int startTime { get; set; } = 0;
+        private int id { get; set; }
+        private int startTime { get; set; } = 0;
         private int endTime { get; set; } = 0;
-        int duration = 0;
-        Operation predecessor;
-        Machine machId;
+        private int duration = 0;
+        private Operation predecessor;
+        private Machine machId;
 
         public Operation() { }
         public Operation(int _id, int _startTime) { id = _id; startTime = _startTime; endTime = startTime; } //Für Initialoperation Operation 0
@@ -46,22 +46,12 @@ namespace Designer
             machId.setEntry(this);
             return true;
         }
-        
-        public int getEndTime()
-        {
-            return endTime; 
-        }
-        public int getId()
-        {
-            return id;
-        }
-
     }
 
     public class Machine
     {
-        int id;
-        string name;
+        private int id;
+        private string name;
         private List<Operation> workload { get; set; } = new List<Operation>();
 
         public Machine (int _id,string _name) {

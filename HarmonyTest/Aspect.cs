@@ -74,6 +74,8 @@ namespace HarmonyTest
 
     public class OverlappingProdTime
     {
+        static Tools tools = new Tools();
+
         public static bool Apply()
         {
             var harmony = HarmonyInstance.Create("OverlappingProdTime");
@@ -85,13 +87,13 @@ namespace HarmonyTest
             return harmony.HasAnyPatches("OverlappingProdTime");
         }
 
-        public static void BeforeCall(int _id, int _startTime, int _duration, Operation _predecessor, Machine _machId)
+        public static void BeforeCall(int _id, int _startTime, Operation _predecessor)
         {
             Console.ForegroundColor = ConsoleColor.DarkRed;
             //CONSTRAINT =>  context: Operation inv: _startTime < predecessor.getEndtime()
-            if (_startTime < _predecessor.getEndTime())
+            if (_startTime < tools.getValue(_predecessor, "endTime"))
             {
-                Console.WriteLine("PLANNING ERROR: Overlapping production times for ID {0} and ID {1}", _id, _predecessor.getId());
+                Console.WriteLine("PLANNING ERROR: Overlapping production times for ID {0} and ID {1}", _id, tools.getValue(_predecessor, "id").ToString());
             }
             Console.ForegroundColor = ConsoleColor.White;
         }
@@ -106,6 +108,7 @@ namespace HarmonyTest
 
     public class MachineNotFree
     {
+        static Tools tools = new Tools();
         public static bool Apply()
         {
             var harmony = HarmonyInstance.Create("MachineNotFree");
@@ -120,9 +123,8 @@ namespace HarmonyTest
         public static void BeforeCall(Machine __instance, Operation op)
         {
             Console.ForegroundColor = ConsoleColor.DarkRed;
-            Tools tools = new Tools();
-            int startTime, endTime;
 
+            int startTime, endTime;
             List<Operation> workload = tools.getValue(__instance, "workload"); 
             int startTimeToAdd = tools.getValue(op, "startTime");
             int endTimeToAdd = tools.getValue(op, "endTime");
@@ -132,16 +134,16 @@ namespace HarmonyTest
                 startTime = tools.getValue(o, "startTime");
                 endTime = tools.getValue(o, "endTime");
 
-                if(startTimeToAdd > startTime && startTimeToAdd < endTime)
+                if (startTimeToAdd > startTime && startTimeToAdd < endTime)
                 {
-                    Console.WriteLine("PLANNING ERROR: Start time from Operation-ID {0} is within other production time.", op.getId());
-                }   
-                
+                    Console.WriteLine("PLANNING ERROR: Start time from Operation-ID {0} is within other production time.", tools.getValue(op, "id").ToString());
+                }
                 if(endTimeToAdd > startTime && endTimeToAdd < endTime)
                 {
-                    Console.WriteLine("PLANNING ERROR: End time from Operation-ID {0} is within other production time.", op.getId());
+                    Console.WriteLine("PLANNING ERROR: End time from Operation-ID {0} is within other production time.", tools.getValue(op, "id").ToString());
                 }
             }
+
             Console.ForegroundColor = ConsoleColor.White;
         }
 
