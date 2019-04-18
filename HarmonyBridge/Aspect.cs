@@ -19,7 +19,7 @@ namespace HarmonyBridge
         }
     }
 
-    /*public class DurationNotNegativ
+    public class DurationNotNegativ
     {
         //private  static  object PrefixRuntime = CodeGenerator.Gernerate();
 
@@ -48,13 +48,13 @@ namespace HarmonyBridge
             return harmony.HasAnyPatches("DurationNotNegativ");
         }
 
-        public static void BeforeCall(int _id, int _duration)
+        public static void BeforeCall(int id, int duration)
         {
             Console.ForegroundColor = ConsoleColor.DarkRed;
             //CONSTRAINT =>  context: Operation inv: _duration > 0
-            if (_duration < 0)
+            if (duration < 0)
             {
-                Console.WriteLine("PLANNING ERROR: Duration time from ID {0} is negativ.", _id);
+                Console.WriteLine("PLANNING ERROR: Duration time from ID {0} is negativ.", id);
             }
             Console.ForegroundColor = ConsoleColor.White;
         }
@@ -67,11 +67,11 @@ namespace HarmonyBridge
         {
             // Even Private properties are accessable through reflection.
             PropertyInfo strProperty =
-            __instance.GetType().GetProperty("endTime", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.GetProperty);
+            __instance.GetType().GetProperty("EndTime", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.GetProperty);
             MethodInfo strGetter = strProperty.GetGetMethod(nonPublic: true);
             int val = (int)strGetter.Invoke(__instance, null);
         }
-    }*/
+    }
 
     public class OverlappingProdTime
     {
