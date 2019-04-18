@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.489
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HarmonyTest", "HarmonyTest\HarmonyTest.csproj", "{88E185BA-B1B2-4265-9255-4DD10F6CBB7C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HarmonyBridge", "HarmonyBridge\HarmonyBridge.csproj", "{88E185BA-B1B2-4265-9255-4DD10F6CBB7C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StandardCode", "StandardCode\StandardCode.csproj", "{CA00DD1F-E3F6-4D31-8743-35BC22BCF7FD}"
 EndProject

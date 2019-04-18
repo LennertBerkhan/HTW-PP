@@ -5,66 +5,76 @@ namespace Designer
 {
     public class Planner
     {
-        public void plan()
+        public static void Plan()
         {
-            
-            Machine m1 = new Machine(1, "Bohrer",15);
-            Machine m2 = new Machine(2, "Fräser",10);
+            var m1 = new Machine(1, "Bohrer", 15);
+            var m2 = new Machine(2, "Fräser", 10);
 
-            Operation op0 = new Operation(0, 0);
-            Operation op1 = new Operation();
-            op1.setTask(1, 0, 5,op0,m1);    
-            Operation op2 = new Operation();
-            op2.setTask(2, 5, 10,op1,m1);
-            Operation op3 = new Operation();
-            op3.setTask(3, 14, -5,op2,m1);
+            var op0 = new Operation(0, 0);
+            var op1 = new Operation();
+            op1.SetTask(1, 0, 5, op0, m1);
+            var op2 = new Operation();
+            op2.SetTask(2, 5, 10, op1, m1);
+            var op3 = new Operation();
+            op3.SetTask(3, 14, -5, op2, m1);
         }
     }
 
     public class Operation
     {
-        private int id { get; set; }
-        private int startTime { get; set; } = 0;
-        private int endTime { get; set; } = 0;
-        private int duration { get; set; } = 0;
-        private Operation predecessor;
-        private Machine machId;
+        private int Id { get; set; }
+        private int StartTime { get; set; } = 0;
+        private int EndTime { get; set; } = 0;
+        private int Duration { get; set; } = 0;
+        private Operation _predecessor;
+        private Machine _machId;
 
-        public Operation() { }
-        public Operation(int _id, int _startTime) { id = _id; startTime = _startTime; endTime = startTime; } //Für Initialoperation Operation 0
-
-        public bool setTask(int _id, int _startTime, int _duration, Operation _predecessor, Machine _machId)
+        public Operation()
         {
-            id = _id;
-            startTime = _startTime;
-            duration = _duration;
-            endTime = startTime + duration;
-            machId = _machId;
-            predecessor = _predecessor;
-            
-            Console.WriteLine("setTask::\tid:{0};\tstartTime{1};\tduration:{2};\tendTime:{3}", id, startTime, duration, endTime);
-            
-            machId.setEntry(this);
+        }
+
+        // initial Operation 0
+        public Operation(int id, int startTime)
+        {
+            Id = id;
+            StartTime = startTime;
+            EndTime = StartTime;
+        } 
+
+        public bool SetTask(int id, int startTime, int duration, Operation predecessor, Machine machId)
+        {
+            Id = id;
+            StartTime = startTime;
+            Duration = duration;
+            EndTime = StartTime + Duration;
+            this._machId = machId;
+            this._predecessor = predecessor;
+
+            Console.WriteLine("setTask::\tid:{0};\tstartTime{1};\tduration:{2};\tendTime:{3}", Id, StartTime, Duration,
+                EndTime);
+
+            this._machId.SetEntry(this);
             return true;
         }
     }
 
     public class Machine
     {
-        private int id { get; set; }
-        private string name { get; set; }
-        private int capacity { get; set; }
-        private List<Operation> workload { get; set; } = new List<Operation>();
+        private int Id { get; set; }
+        private string Name { get; set; }
+        private int Capacity { get; set; }
+        private List<Operation> Workload { get; set; } = new List<Operation>();
 
-        public Machine (int _id,string _name, int _capa) {
-            id = _id;
-            name = _name;
-            capacity = _capa;
+        public Machine(int id, string name, int capa)
+        {
+            Id = id;
+            Name = name;
+            Capacity = capa;
         }
 
-        public void setEntry (Operation op)
+        public void SetEntry(Operation op)
         {
-            workload.Add(op);
+            Workload.Add(op);
         }
     }
 }

@@ -18,13 +18,13 @@ namespace StandardCode
 
     public class Plan : IPlan
     {
-        private int Number = 0;
+        private int _number = 0;
         private string PrivateStr { get; set; } = "I'm a private property";
 
         public bool AddQuantity(int number)
         {
-            Console.WriteLine(@"Adding : " + number + " to " + Number + "!");
-            Number = number + Number;
+            Console.WriteLine(@"Adding : " + number + " to " + _number + "!");
+            _number = number + _number;
             return true;
 
         }
