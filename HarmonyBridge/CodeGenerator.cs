@@ -2,6 +2,7 @@
 using System.CodeDom.Compiler;
 using Microsoft.CSharp;
 using Harmony;
+using System.Reflection;
 
 namespace HarmonyBridge
 {
@@ -40,6 +41,7 @@ namespace HarmonyBridge
                 IncludeDebugInformation = true,
                 GenerateInMemory = true
             };
+            
             param.ReferencedAssemblies.Add("System.dll");
             param.ReferencedAssemblies.Add("System.Xml.dll");
             param.ReferencedAssemblies.Add("System.Data.dll");
@@ -55,20 +57,24 @@ namespace HarmonyBridge
             var results = codeProvider.CompileAssemblyFromSource(param, code);
 
             if (!results.Errors.HasErrors)
-                // _runtimeCode = results.CompiledAssembly.CreateInstance(_options.Context.Namespace + "." + _options.Context.Name).GetType();
-                _runtimeCode =
-                    results.CompiledAssembly.GetType("HookClass_" + _options.Context.Namespace + "." +
-                                                     _options.ClassName);
+            {
+                _assembly = results.CompiledAssembly;
+                _instance = _assembly.CreateInstance("HookClass_" + _options.Context.Namespace + "." + _options.ClassName);
+                _runtimeCode = _instance.GetType();
+                //_runtimeCode =
+                //    results.CompiledAssembly.GetType("HookClass_" + _options.Context.Namespace + "." +
+                //                                     _options.ClassName);
+            }
             else
             {
                 foreach (var error in results.Errors)
                     Console.WriteLine(error);
                 throw new Exception("CodeGen failed!");
             }
-            ResolveEventHandler @object = (object obj, ResolveEventArgs args) => results.CompiledAssembly;
-            AppDomain currentDomain = AppDomain.CurrentDomain;
-            currentDomain.AssemblyResolve += @object.Invoke;
         }
+
+        private dynamic _instance;
+        private Assembly _assembly;
 
         private string getMethodArgumentsList()
         {
@@ -86,10 +92,16 @@ namespace HarmonyBridge
 
         public void InvokeApplyMethod()
         {
-            _runtimeCode.GetMethod("Apply").Invoke(null, new object[]
+
+            ResolveEventHandler @object = (object obj, ResolveEventArgs args) => _assembly;
+            AppDomain currentDomain = AppDomain.CurrentDomain;
+            currentDomain.AssemblyResolve += @object.Invoke;
+            var method = _runtimeCode.GetMethod("Apply");
+            Tuple<HarmonyInstance, MethodInfo, HarmonyMethod, HarmonyMethod> tup = method.Invoke(_instance, new object[]
             {
                 _options.Context
             });
+            tup.Item1.Patch(tup.Item2, tup.Item3, tup.Item4);
         }
 
         private string GenerateCodeString()
@@ -104,7 +116,8 @@ namespace HookClass_" + _options.Context.Namespace + @"
 {
 public class " + _options.ClassName + @"
     {
-        public static void Apply(System.Type ctx)
+        public " + _options.ClassName + @"() {}
+        public Tuple<HarmonyInstance, MethodInfo, HarmonyMethod, HarmonyMethod> Apply(System.Type ctx)
         {
             if (ctx == null)
                 throw new Exception(""[" + _options.ClassName + @"] ctx is null!"");
@@ -114,9 +127,10 @@ public class " + _options.ClassName + @"
                 throw new Exception(""[" + _options.ClassName + @"] original method == null."");
             var prefix = typeof(" + _options.ClassName + @").GetMethod(""BeforeCall"");
             var postfix = typeof(" + _options.ClassName + @").GetMethod(""AfterCall"");
-            harmony.Patch(original, new HarmonyMethod(prefix), new HarmonyMethod(postfix));
-            if (!harmony.HasAnyPatches(""" + _options.ClassName + @"""))
-                throw new Exception(""[" + _options.ClassName + @"] applying hook failed."");
+            // harmony.Patch(original, new HarmonyMethod(prefix), new HarmonyMethod(postfix));
+            // if (!harmony.HasAnyPatches(""" + _options.ClassName + @"""))
+            //     throw new Exception(""[" + _options.ClassName + @"] applying hook failed."");
+            return new Tuple<HarmonyInstance, MethodInfo, HarmonyMethod, HarmonyMethod>(harmony, original, new HarmonyMethod(prefix), new HarmonyMethod(postfix));
         }
 
         public static void BeforeCall(object __instance" + funcArgsAddStr + @")
