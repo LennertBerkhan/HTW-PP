@@ -1,8 +1,7 @@
 ﻿using System;
 using System.CodeDom.Compiler;
-using System.Collections.Generic;
-using System.Threading;
 using Microsoft.CSharp;
+using Harmony;
 
 namespace HarmonyBridge
 {
@@ -47,6 +46,7 @@ namespace HarmonyBridge
             param.ReferencedAssemblies.Add("System.Core.dll");
             param.ReferencedAssemblies.Add("System.Xml.Linq.dll");
             param.ReferencedAssemblies.Add("0Harmony.dll");
+            param.ReferencedAssemblies.Add(typeof(HarmonyInstance).Assembly.Location);
             param.ReferencedAssemblies.Add("Microsoft.CSharp.dll");
             // param.ReferencedAssemblies.Add("Designer.dll"); // new System.Uri(System.Reflection.Assembly.GetExecutingAssembly().EscapedCodeBase).LocalPath);
 
@@ -65,6 +65,9 @@ namespace HarmonyBridge
                     Console.WriteLine(error);
                 throw new Exception("CodeGen failed!");
             }
+            ResolveEventHandler @object = (object obj, ResolveEventArgs args) => results.CompiledAssembly;
+            AppDomain currentDomain = AppDomain.CurrentDomain;
+            currentDomain.AssemblyResolve += @object.Invoke;
         }
 
         private string getMethodArgumentsList()
