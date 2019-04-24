@@ -200,6 +200,45 @@ namespace HarmonyBridge
         }
     }
 
+   
+    public class CheckMaterialQuantity
+    {
+        public static bool Apply()
+        {
+            var harmony = HarmonyInstance.Create("CheckMaterialQuantity");
+            var original = typeof(Material).GetMethod("SetReservation");
+            var prefix = typeof(CheckMaterialQuantity).GetMethod("BeforeCall");
+            var postfix = typeof(CheckMaterialQuantity).GetMethod("AfterCall");
+            harmony.Patch(original, new HarmonyMethod(prefix), new HarmonyMethod(postfix));
+            return harmony.HasAnyPatches("CheckMaterialQuantity");
+        }
+
+        public static void BeforeCall(CheckMaterialQuantity __instance)
+        {
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+
+        public static void AfterCall(CheckMaterialQuantity __instance)
+        {
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            var sum = 0;
+            var quant = Tools.GetValue(__instance, "Quantity");
+            var list = Tools.GetValue(__instance, "Reservation"); 
+            foreach(var o in list)
+            {
+                sum = sum - Tools.GetValue(o,"Quant"); 
+                if (sum > quant) { Console.WriteLine("Planning Error: No Material left" );  }
+                
+            }
+
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+    }
+
+
+
+
     public class CLASS_NAME{ public void METHODE_NAME(){} }
 
     public class CONSTRAINT_NAME
