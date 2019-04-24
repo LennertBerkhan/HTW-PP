@@ -222,13 +222,12 @@ namespace HarmonyBridge
         public static void AfterCall(CheckMaterialQuantity __instance)
         {
             Console.ForegroundColor = ConsoleColor.DarkRed;
-            var sum = 0;
             var quant = Tools.GetValue(__instance, "Quantity");
             var list = Tools.GetValue(__instance, "Reservation"); 
             foreach(var o in list)
             {
-                sum = sum - Tools.GetValue(o,"Quant"); 
-                if (sum > quant) { Console.WriteLine("Planning Error: No Material left" );  }
+                quant = quant - Tools.GetValue(o,"Quant"); 
+                if (quant < 0) { Console.WriteLine("Planning Error: Not enough material {0} left for operation {1}.",Tools.GetValue(__instance, "Id"),Tools.GetValue(o, "Id") );  }
                 
             }
 

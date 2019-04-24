@@ -34,7 +34,7 @@ namespace Designer
         private Operation _predecessor;
         private Machine _machId;
         private Material _matId;
-        private int Quant; 
+        private int Quant { get; set; } = 0;
 
         public Operation()
         {
