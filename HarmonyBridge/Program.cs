@@ -1,4 +1,4 @@
-﻿// #define DONT_USE_CODEGENERATOR 
+﻿//#define DONT_USE_CODEGENERATOR 
 
 using System;
 using Designer;
@@ -20,6 +20,10 @@ namespace HarmonyBridge
             if (!OverlappingProdTime.Apply()) throw new Exception("Applying aspect failed");
             if (!MachineNotFree.Apply()) throw new Exception("Applying aspect failed");
             if (!CapacityCheck.Apply()) throw new Exception("Applying aspect failed");
+            Console.WriteLine("\nOutput with Harmony/Aspects");
+            Planner.Plan();
+            Console.ReadKey();
+            
 #else
             //CONSTRAINT =>  context: Operation pre: _duration > 0
             new CodeGenerator(new CodeGenerator.Options(
@@ -47,11 +51,10 @@ namespace HarmonyBridge
                     "true"
                 ))
                 .InvokeApplyMethod();
-#endif
-
-            Console.WriteLine("\nOutput with Harmony/Aspects");
             Planner.Plan();
-            // Console.ReadKey();
+            Console.ReadKey();
+            
+#endif
         }
     }
 }

@@ -199,4 +199,35 @@ namespace HarmonyBridge
             Console.ForegroundColor = ConsoleColor.White;
         }
     }
+
+    public class CLASS_NAME{ public void METHODE_NAME(){} }
+
+    public class CONSTRAINT_NAME
+    {
+        public static bool Apply()
+        {
+            var harmony = HarmonyInstance.Create("CONSTRAINT_NAME");
+            var original = typeof(CLASS_NAME).GetMethod("METHODE_NAME");
+            var prefix = typeof(CONSTRAINT_NAME).GetMethod("BeforeCall");
+            var postfix = typeof(CONSTRAINT_NAME).GetMethod("AfterCall");
+            harmony.Patch(original, new HarmonyMethod(prefix), new HarmonyMethod(postfix));
+            return harmony.HasAnyPatches("CONSTRAINT_NAME");
+        }
+
+        public static void BeforeCall(CLASS_NAME __instance)
+        {
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            //SPACE FOR CODE
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+
+        public static void AfterCall(CLASS_NAME __instance)
+        {
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            //SPACE FOR CODE
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+    }
+
 }
+
