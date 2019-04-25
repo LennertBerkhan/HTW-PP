@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq; 
 
 namespace Designer
 {
     public class Planner
     {
-        private int ProductionTime { get; set; } = 30;  // Zeitspanne für Produktionsplan 
+        private int ProductionTime { get; set; } = 16;  // Zeitspanne für Produktionsplan 
 
         private List<Operation> Operations { get; set; } = new List<Operation>();
 
@@ -23,7 +24,7 @@ namespace Designer
             Operations.Add(new Operation().SetTask(1, 0, 5, Operations[0] , ma1, mt1, 10));
             Operations.Add(new Operation().SetTask(2, 5, 10, Operations[1], ma1, mt1, 10));
             Operations.Add(new Operation().SetTask(3, 14, -5, Operations[2], ma1, mt3, 30));
-            
+
         }
     }
 

@@ -2,6 +2,7 @@
 
 using System;
 using Designer;
+using System.Linq;
 
 
 namespace HarmonyBridge
@@ -21,8 +22,11 @@ namespace HarmonyBridge
             if (!MachineNotFree.Apply()) throw new Exception("Applying aspect failed");
             if (!CapacityCheck.Apply()) throw new Exception("Applying aspect failed");
             if (!CheckMaterialQuantity.Apply()) throw new Exception("Applying aspect failed");
+            if (!CheckProductionTime.Apply()) throw new Exception("Applying aspect failed");
+            
             Console.WriteLine("\nOutput with Harmony/Aspects");
-            planner.Plan();
+            var planner1 = new Planner(); 
+            planner1.Plan();
             Console.ReadKey();
             
 #else

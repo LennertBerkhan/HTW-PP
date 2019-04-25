@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using Designer;
 using Harmony;
+using System.Linq;
 
 namespace HarmonyBridge
 {
@@ -199,8 +200,7 @@ namespace HarmonyBridge
             Console.ForegroundColor = ConsoleColor.White;
         }
     }
-
-   
+       
     public class CheckMaterialQuantity
     {
         public static bool Apply()
@@ -235,7 +235,38 @@ namespace HarmonyBridge
         }
     }
 
+    public class CheckProductionTime
+    {
+        public static bool Apply()
+        {
+            var harmony = HarmonyInstance.Create("CheckProductionTime");
+            var original = typeof(Planner).GetMethod("Plan");
+            var prefix = typeof(CheckProductionTime).GetMethod("BeforeCall");
+            var postfix = typeof(CheckProductionTime).GetMethod("AfterCall");
+            harmony.Patch(original, new HarmonyMethod(prefix), new HarmonyMethod(postfix));
+            return harmony.HasAnyPatches("CheckProductionTime");
+        }
 
+        public static void BeforeCall(Planner __instance)
+        {
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            //SPACE FOR CODE
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+
+        public static void AfterCall(Planner __instance)
+        {
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            var prodTime = Tools.GetValue(__instance, "ProductionTime");
+            List<Operation> list = Tools.GetValue(__instance, "Operations");
+            if (list.Sum(op=>Tools.GetValue(op, "Duration")) > prodTime)
+            {
+                Console.WriteLine("Planning Error: Not enough time for planned operations.");
+            }
+
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+    }
 
 
     public class CLASS_NAME{ public void METHODE_NAME(){} }
