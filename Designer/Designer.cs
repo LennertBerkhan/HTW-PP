@@ -5,8 +5,13 @@ namespace Designer
 {
     public class Planner
     {
-        public static void Plan()
+        private int ProductionTime { get; set; } = 30;  // Zeitspanne für Produktionsplan 
+
+        private List<Operation> Operations { get; set; } = new List<Operation>();
+
+        public void Plan()
         {
+            
             var ma1 = new Machine(1, "Bohrer", 15);
             var ma2 = new Machine(2, "Fräser", 10);
 
@@ -14,14 +19,11 @@ namespace Designer
             var mt2 = new Material(2, "Kleber", 50);
             var mt3 = new Material(3, "Schrauben", 50);
 
-            var op0 = new Operation(0, 0);
-            var op1 = new Operation();
-            op1.SetTask(1, 0, 5, op0, ma1,mt1 ,10);
-            var op2 = new Operation();
-            op2.SetTask(2, 5, 10, op1, ma1, mt1, 10);
-            var op3 = new Operation();
-            op3.SetTask(3, 14, -5, op2, ma1,mt3 ,30);
-
+            Operations.Add(new Operation(0, 0));
+            Operations.Add(new Operation().SetTask(1, 0, 5, Operations[0] , ma1, mt1, 10));
+            Operations.Add(new Operation().SetTask(2, 5, 10, Operations[1], ma1, mt1, 10));
+            Operations.Add(new Operation().SetTask(3, 14, -5, Operations[2], ma1, mt3, 30));
+            
         }
     }
 
@@ -48,7 +50,7 @@ namespace Designer
             EndTime = StartTime;
         } 
 
-        public bool SetTask(int id, int startTime, int duration, Operation predecessor, Machine machId, Material mat, int quant)
+        public Operation SetTask(int id, int startTime, int duration, Operation predecessor, Machine machId, Material mat, int quant)
         {
             Id = id;
             StartTime = startTime;
@@ -58,15 +60,12 @@ namespace Designer
             this._predecessor = predecessor;
             this._matId = mat;
             Quant = quant; 
-
-                     
-
-            Console.WriteLine("setTask::\tid:{0};\tstartTime{1};\tduration:{2};\tendTime:{3}", Id, StartTime, Duration,
-                EndTime);
+                           
+            Console.WriteLine("setTask::\tid:{0};\tstartTime{1};\tduration:{2};\tendTime:{3}", Id, StartTime, Duration,EndTime);
 
             this._machId.SetEntry(this);
             this._matId.SetReservation(this); 
-            return true;
+            return this;
         }
     }
 

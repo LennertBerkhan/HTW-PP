@@ -12,7 +12,7 @@ namespace HarmonyBridge
         {
             var planner = new Planner();
             Console.WriteLine("Output without Harmony/Aspects");
-            Planner.Plan();
+            planner.Plan();
             
 
 #if DONT_USE_CODEGENERATOR
@@ -22,7 +22,7 @@ namespace HarmonyBridge
             if (!CapacityCheck.Apply()) throw new Exception("Applying aspect failed");
             if (!CheckMaterialQuantity.Apply()) throw new Exception("Applying aspect failed");
             Console.WriteLine("\nOutput with Harmony/Aspects");
-            Planner.Plan();
+            planner.Plan();
             Console.ReadKey();
             
 #else
@@ -52,7 +52,7 @@ namespace HarmonyBridge
                     "true"
                 ))
                 .InvokeApplyMethod();
-            Planner.Plan();
+            planner.Plan();
             Console.ReadKey();
             
 #endif
