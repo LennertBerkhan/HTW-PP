@@ -1,20 +1,24 @@
-﻿#define DONT_USE_CODEGENERATOR 
+﻿#define DONT_USE_CODEGENERATOR
 
 using System;
-using Designer;
+using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using Designer;
+using Xunit;
 
 
 namespace HarmonyBridge
 {
-    internal static class Program
+    public static class Program
     {
-        private static void Main(string[] args)
+        public static void Main(string[] args)
         {
             var planner = new Planner();
             Console.WriteLine("Output without Harmony/Aspects");
             planner.Plan();
-            
+
 
 #if DONT_USE_CODEGENERATOR
             if (!DurationNotNegativ.Apply()) throw new Exception("Applying aspect failed");
@@ -23,12 +27,12 @@ namespace HarmonyBridge
             if (!CapacityCheck.Apply()) throw new Exception("Applying aspect failed");
             if (!CheckMaterialQuantity.Apply()) throw new Exception("Applying aspect failed");
             if (!CheckProductionTime.Apply()) throw new Exception("Applying aspect failed");
-            
+
             Console.WriteLine("\nOutput with Harmony/Aspects");
-            var planner1 = new Planner(); 
+            var planner1 = new Planner();
             planner1.Plan();
             Console.ReadKey();
-            
+
 #else
             //CONSTRAINT =>  context: Operation pre: _duration > 0
             new CodeGenerator(new CodeGenerator.Options(

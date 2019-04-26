@@ -76,7 +76,7 @@ namespace HarmonyBridge
         private dynamic _instance;
         private Assembly _assembly;
 
-        private string getMethodArgumentsList()
+        private string GetMethodArgumentsList()
         {
             var original = _options.Context.GetMethod(_options.HookedFuncName);
             string args = "";
@@ -104,14 +104,24 @@ namespace HarmonyBridge
             tup.Item1.Patch(tup.Item2, tup.Item3, tup.Item4);
         }
 
+        public bool HasPlanningError
+        {
+            get
+            {
+                var method = _runtimeCode.GetProperty("HasPlanningError");
+                return method.GetValue(_instance);
+            }
+        }
+
         private string GenerateCodeString()
         {
-            var funcArgsAddStr = getMethodArgumentsList();
+            var funcArgsAddStr = GetMethodArgumentsList();
             return @"
 using Harmony;
 using System;
 using System.Reflection;
 using System.Collections.Generic;
+
 namespace HookClass_" + _options.Context.Namespace + @"
 {
 public class " + _options.ClassName + @"
@@ -138,10 +148,7 @@ public class " + _options.ClassName + @"
             var self = __instance;
             if (!(" + _options.BeforeCode + @"))
             {
-                // var col = Console.ForegroundColor
-                // Console.ForegroundColor = ConsoleColor.DarkRed;
-                Console.WriteLine(""Planning Error (beforeCall): " + _options.ClassName + @"."");
-                // Console.ForegroundColor = col;
+                SetPlanningError();
             }
         }
         public static void AfterCall(object __instance" + funcArgsAddStr + @")
@@ -150,12 +157,17 @@ public class " + _options.ClassName + @"
 
             if (!(" + _options.AfterCode + @"))
             {
-                // var col = Console.ForegroundColor
-                // Console.ForegroundColor = ConsoleColor.DarkRed;
-                Console.WriteLine(""Planning Error (afterCall): " + _options.ClassName + @"."");
-                // Console.ForegroundColor = col;
+                SetPlanningError();
             }
         }
+
+        public static bool HasPlanningError { get; private set; }
+        private static void SetPlanningError()
+        {
+            Console.WriteLine(""Planning Error " + _options.ClassName + @"."");
+            HasPlanningError = true;
+        }
+
         public static dynamic GetValue(dynamic instance, string variableName)
         {
             PropertyInfo prop = instance.GetType().GetProperty(variableName,

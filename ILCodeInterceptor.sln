@@ -5,9 +5,9 @@ VisualStudioVersion = 15.0.28307.489
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HarmonyBridge", "HarmonyBridge\HarmonyBridge.csproj", "{88E185BA-B1B2-4265-9255-4DD10F6CBB7C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StandardCode", "StandardCode\StandardCode.csproj", "{CA00DD1F-E3F6-4D31-8743-35BC22BCF7FD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Designer", "Designer\Designer.csproj", "{CA00DD1F-E3F6-4D31-8743-35BC22BCF7FD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Designer", "Designer\Designer.csproj", "{9542217F-2EA5-44A9-A294-B6EA03322025}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspectTester", "AspectTester\AspectTester.csproj", "{2345E177-A5AB-4B49-B945-3451ECC9D5D5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +23,10 @@ Global
 		{CA00DD1F-E3F6-4D31-8743-35BC22BCF7FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CA00DD1F-E3F6-4D31-8743-35BC22BCF7FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CA00DD1F-E3F6-4D31-8743-35BC22BCF7FD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9542217F-2EA5-44A9-A294-B6EA03322025}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9542217F-2EA5-44A9-A294-B6EA03322025}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9542217F-2EA5-44A9-A294-B6EA03322025}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9542217F-2EA5-44A9-A294-B6EA03322025}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2345E177-A5AB-4B49-B945-3451ECC9D5D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2345E177-A5AB-4B49-B945-3451ECC9D5D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2345E177-A5AB-4B49-B945-3451ECC9D5D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2345E177-A5AB-4B49-B945-3451ECC9D5D5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
