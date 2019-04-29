@@ -30,6 +30,11 @@ namespace HarmonyBridge
         private readonly Options _options;
         private readonly dynamic _runtimeCode;
 
+        public CodeGenerator(string className, System.Type ctx, Aspect aspect) : this(new Options(className, ctx,
+            aspect.FunctionName, aspect.BeforeCode, aspect.AfterCode))
+        {
+        }
+
         public CodeGenerator(Options options)
         {
             _options = options;
@@ -41,7 +46,7 @@ namespace HarmonyBridge
                 IncludeDebugInformation = true,
                 GenerateInMemory = true
             };
-            
+
             param.ReferencedAssemblies.Add("System.dll");
             param.ReferencedAssemblies.Add("System.Xml.dll");
             param.ReferencedAssemblies.Add("System.Data.dll");
@@ -59,8 +64,9 @@ namespace HarmonyBridge
             if (!results.Errors.HasErrors)
             {
                 _assembly = results.CompiledAssembly;
-                _instance = _assembly.CreateInstance("HookClass_" + _options.Context.Namespace + "." + _options.ClassName);
-                _runtimeCode = _instance.GetType();
+                _instance = _assembly.CreateInstance("HookClass_" + _options.Context.Namespace + "." +
+                                                     _options.ClassName);
+                if (_instance != null) _runtimeCode = _instance.GetType();
                 //_runtimeCode =
                 //    results.CompiledAssembly.GetType("HookClass_" + _options.Context.Namespace + "." +
                 //                                     _options.ClassName);
@@ -73,26 +79,27 @@ namespace HarmonyBridge
             }
         }
 
-        private dynamic _instance;
-        private Assembly _assembly;
+        private readonly dynamic _instance;
+        private readonly Assembly _assembly;
 
         private string GetMethodArgumentsList()
         {
             var original = _options.Context.GetMethod(_options.HookedFuncName);
             string args = "";
-            foreach (var pi in original.GetParameters())
-            {
-                var pt = pi.ParameterType.ToString();
-                if (!pt.StartsWith("System.Int"))
-                    pt = "dynamic";
-                args += ", " + pt + " " + pi.Name;
-            }
+            if (original != null)
+                foreach (var pi in original.GetParameters())
+                {
+                    var pt = pi.ParameterType.ToString();
+                    if (!pt.StartsWith("System.Int"))
+                        pt = "dynamic";
+                    args += ", " + pt + " " + pi.Name;
+                }
+
             return args;
         }
 
         public void InvokeApplyMethod()
         {
-
             ResolveEventHandler @object = (object obj, ResolveEventArgs args) => _assembly;
             AppDomain currentDomain = AppDomain.CurrentDomain;
             currentDomain.AssemblyResolve += @object.Invoke;

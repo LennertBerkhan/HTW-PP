@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using Designer;
 using HarmonyBridge;
+using Newtonsoft.Json;
 using Xunit;
 
 namespace AspectTester
@@ -13,21 +14,27 @@ namespace AspectTester
         [Fact]
         private void OverlappingProdTimeTest()
         {
-            RunAspectTest(
-                "Designer.Operation",
-                "SetTask",
-                "startTime >= GetValue(predecessor, \"EndTime\")"
-            );
+            var a = new Aspect
+            {
+                ContextName = "Designer.Operation",
+                FunctionName = "SetTask",
+                BeforeCode = "startTime >= GetValue(predecessor, \"EndTime\")",
+                AfterCode = "true"
+            };
+            RunAspectTest(a);
         }
 
         [Fact]
         private void DurationNotNegativeTest()
         {
-            RunAspectTest(
-                "Designer.Operation",
-                "SetTask",
-                "duration >= 0"
-            );
+            var a = new Aspect
+            {
+                ContextName = "Designer.Operation",
+                FunctionName = "SetTask",
+                BeforeCode = "duration >= 0",
+                AfterCode = "true"
+            };
+            RunAspectTest(a);
         }
 
         public Tests()
@@ -37,18 +44,6 @@ namespace AspectTester
 
         private static Assembly _assembly;
 
-        private string CSharpToOcl(string ocl)
-        {
-            Process p = new Process();
-            p.StartInfo.UseShellExecute = false;
-            p.StartInfo.RedirectStandardOutput = true;
-            p.StartInfo.FileName = "conv.exe";
-            p.StartInfo.Arguments = ocl;
-            p.Start();
-            string output = p.StandardOutput.ReadToEnd();
-            p.WaitForExit();
-            return output;
-        }
 
         private static System.Type ContextNameToType(string ctxName)
         {
@@ -56,24 +51,21 @@ namespace AspectTester
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private void RunAspectTest(string contextClassName, string functionName, string beforeCode,
-            string afterCode = "true")
+        private static void RunAspectTest(Aspect aspect)
         {
             var planner = new Planner();
 
             string aspectName = GetCurrentTestName();
             Console.WriteLine("0, " + aspectName);
-            Console.WriteLine("1, " + contextClassName);
-            System.Type ctx = ContextNameToType(contextClassName);
+            Console.WriteLine("1, " + aspect.ContextName);
+            System.Type ctx = ContextNameToType(aspect.ContextName);
             Console.WriteLine("2, " + ctx.ToString());
 
-            var cgen = new CodeGenerator(new CodeGenerator.Options(
+            var cgen = new CodeGenerator(
                 aspectName,
                 ctx,
-                functionName,
-                beforeCode,
-                afterCode
-            ));
+                aspect
+            );
             cgen.InvokeApplyMethod();
             planner.Plan();
 
@@ -81,7 +73,7 @@ namespace AspectTester
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private string GetCurrentTestName()
+        private static string GetCurrentTestName()
         {
             var st = new StackTrace();
             var sf = st.GetFrame(2);
