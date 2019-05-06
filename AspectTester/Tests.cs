@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using Designer;
@@ -12,30 +14,41 @@ namespace AspectTester
     public class Tests
     {
         [Fact]
-        private void OverlappingProdTimeTest()
+        private void RunAspectTests()
         {
-            var a = new Aspect
-            {
-                ContextName = "Designer.Operation",
-                FunctionName = "SetTask",
-                BeforeCode = "startTime >= GetValue(predecessor, \"EndTime\")",
-                AfterCode = "true"
-            };
-            RunAspectTest(a);
+            var planner = new Planner();
+            
+            var gens = new List<CodeGenerator>();
+            gens.Add(OverlappingProdTimeTest());
+            gens.Add(DurationNotNegativeTest());
+
+            planner.Plan();
+
+            Assert.DoesNotContain(gens, gen => gen.HasPlanningError);
+        }
+        private CodeGenerator OverlappingProdTimeTest()
+        {
+            var aspect = Aspect.OclToAspect("context Operation::SetTask() pre: startTime >= predecessor.EndTime");
+            return GenCode(aspect);
         }
 
-        [Fact]
-        private void DurationNotNegativeTest()
+        private CodeGenerator DurationNotNegativeTest()
         {
-            var a = new Aspect
-            {
-                ContextName = "Designer.Operation",
-                FunctionName = "SetTask",
-                BeforeCode = "duration >= 0",
-                AfterCode = "true"
-            };
-            RunAspectTest(a);
+            var aspect = Aspect.OclToAspect("context Operation::SetTask() pre: duration >= 0");
+            return GenCode(aspect);
         }
+        
+        // private CodeGenerator DurationNotNegativeTest()
+        // {
+        //     var a = new Aspect
+        //     {
+        //         ContextName = "Designer.Operation",
+        //         FunctionName = "SetTask",
+        //         BeforeCode = "duration >= 0",
+        //         AfterCode = "true"
+        //     };
+        //     RunAspectTest(a);
+        // }
 
         public Tests()
         {
@@ -51,15 +64,12 @@ namespace AspectTester
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private static void RunAspectTest(Aspect aspect)
+        private CodeGenerator GenCode(Aspect aspect)
         {
-            var planner = new Planner();
-
             string aspectName = GetCurrentTestName();
-            Console.WriteLine("0, " + aspectName);
-            Console.WriteLine("1, " + aspect.ContextName);
+            Console.WriteLine("AspectName: " + aspectName);
             System.Type ctx = ContextNameToType(aspect.ContextName);
-            Console.WriteLine("2, " + ctx.ToString());
+            Console.WriteLine("ContextName: " + ctx.ToString());
 
             var cgen = new CodeGenerator(
                 aspectName,
@@ -67,9 +77,7 @@ namespace AspectTester
                 aspect
             );
             cgen.InvokeApplyMethod();
-            planner.Plan();
-
-            Assert.False(cgen.HasPlanningError);
+            return cgen;
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]

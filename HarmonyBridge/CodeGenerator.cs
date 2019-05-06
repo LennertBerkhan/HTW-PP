@@ -86,14 +86,14 @@ namespace HarmonyBridge
         {
             var original = _options.Context.GetMethod(_options.HookedFuncName);
             string args = "";
-            if (original != null)
-                foreach (var pi in original.GetParameters())
-                {
-                    var pt = pi.ParameterType.ToString();
-                    if (!pt.StartsWith("System.Int"))
-                        pt = "dynamic";
-                    args += ", " + pt + " " + pi.Name;
-                }
+            if (original == null) return args;
+            foreach (var pi in original.GetParameters())
+            {
+                var pt = pi.ParameterType.ToString();
+                if (!pt.StartsWith("System.Int"))
+                    pt = "dynamic";
+                args += ", " + pt + " " + pi.Name;
+            }
 
             return args;
         }
@@ -128,11 +128,13 @@ using Harmony;
 using System;
 using System.Reflection;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace HookClass_" + _options.Context.Namespace + @"
 {
 public class " + _options.ClassName + @"
     {
+private static ConditionalWeakTable<object, object> oset = new ConditionalWeakTable<object, object>();
         public " + _options.ClassName + @"() {}
         public Tuple<HarmonyInstance, MethodInfo, HarmonyMethod, HarmonyMethod> Apply(System.Type ctx)
         {
@@ -153,14 +155,26 @@ public class " + _options.ClassName + @"
         public static void BeforeCall(object __instance" + funcArgsAddStr + @")
         {
             var self = __instance;
+
             if (!(" + _options.BeforeCode + @"))
             {
                 SetPlanningError();
             }
+
+            Type newObjectType = self.GetType();
+            object newObject = Activator.CreateInstance(newObjectType);
+            foreach (var propInfo in self.GetType().GetProperties())
+            {
+                object orgValue = propInfo.GetValue(self, null);
+                propInfo.SetValue(newObject, orgValue, null);
+            }
+            oset.Add(self, newObject);
         }
         public static void AfterCall(object __instance" + funcArgsAddStr + @")
         {
             var self = __instance;
+            object pre;
+            oset.TryGetValue(self, out pre);
 
             if (!(" + _options.AfterCode + @"))
             {
