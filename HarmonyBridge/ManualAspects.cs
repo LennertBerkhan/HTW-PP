@@ -108,17 +108,17 @@ namespace HarmonyBridge
         }
     }
 
-    public class MachineNotFree
+    public class StartTimeCollision
     {
         public static bool Apply()
         {
-            var harmony = HarmonyInstance.Create("MachineNotFree");
+            var harmony = HarmonyInstance.Create("StartTimeCollision");
             var original = typeof(Machine).GetMethod("SetEntry");
-            var prefix = typeof(MachineNotFree).GetMethod("BeforeCall");
-            var postfix = typeof(MachineNotFree).GetMethod("AfterCall");
+            var prefix = typeof(StartTimeCollision).GetMethod("BeforeCall");
+            var postfix = typeof(StartTimeCollision).GetMethod("AfterCall");
             harmony.Patch(original, new HarmonyMethod(prefix), new HarmonyMethod(postfix));
 
-            return harmony.HasAnyPatches("MachineNotFree");
+            return harmony.HasAnyPatches("StartTimeCollision");
         }
 
         public static void BeforeCall(Machine __instance, Operation op)
@@ -140,6 +140,44 @@ namespace HarmonyBridge
                         "PLANNING ERROR: Start time from Operation-ID {0} is within other production time.",
                         Tools.GetValue(op, "Id").ToString());
                 }
+            }
+
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+
+        public static void AfterCall(Machine __instance)
+        {
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            //SPACE FOR CODE
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+    }
+
+    public class EndTimeCollision
+    {
+        public static bool Apply()
+        {
+            var harmony = HarmonyInstance.Create("EndTimeCollision");
+            var original = typeof(Machine).GetMethod("SetEntry");
+            var prefix = typeof(EndTimeCollision).GetMethod("BeforeCall");
+            var postfix = typeof(EndTimeCollision).GetMethod("AfterCall");
+            harmony.Patch(original, new HarmonyMethod(prefix), new HarmonyMethod(postfix));
+
+            return harmony.HasAnyPatches("EndTimeCollision");
+        }
+
+        public static void BeforeCall(Machine __instance, Operation op)
+        {
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+
+            List<Operation> workload = Tools.GetValue(__instance, "Workload");
+            int startTimeToAdd = Tools.GetValue(op, "StartTime");
+            int endTimeToAdd = Tools.GetValue(op, "EndTime");
+
+            foreach (var o in workload)
+            {
+                int startTime = Tools.GetValue(o, "StartTime");
+                int endTime = Tools.GetValue(o, "EndTime");
 
                 if (endTimeToAdd > startTime && endTimeToAdd < endTime)
                 {
