@@ -127,7 +127,6 @@ namespace HarmonyBridge
 
             List<Operation> workload = Tools.GetValue(__instance, "Workload");
             int startTimeToAdd = Tools.GetValue(op, "StartTime");
-            int endTimeToAdd = Tools.GetValue(op, "EndTime");
 
             foreach (var o in workload)
             {
@@ -171,7 +170,6 @@ namespace HarmonyBridge
             Console.ForegroundColor = ConsoleColor.DarkRed;
 
             List<Operation> workload = Tools.GetValue(__instance, "Workload");
-            int startTimeToAdd = Tools.GetValue(op, "StartTime");
             int endTimeToAdd = Tools.GetValue(op, "EndTime");
 
             foreach (var o in workload)
