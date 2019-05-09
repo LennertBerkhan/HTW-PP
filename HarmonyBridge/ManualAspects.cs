@@ -236,7 +236,9 @@ namespace HarmonyBridge
             Console.ForegroundColor = ConsoleColor.White;
         }
     }
-       
+
+
+    //context Material::SetReservation(op: Operation, q: int) post CheckMaterialQuantity:self.Quantity >= self.ReservationQu->sum()
     public class CheckMaterialQuantity
     {
         public static bool Apply()
