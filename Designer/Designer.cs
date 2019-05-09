@@ -8,6 +8,8 @@ namespace Designer
         private int ProductionTime { get; set; } = 16;  // Zeitspanne für Produktionsplan 
 
         private List<Operation> Operations { get; set; } = new List<Operation>();
+        private List<Material> lm = new List<Material>();
+        private List<int> lq = new List<int>();
 
         public void Plan()
         {
@@ -19,10 +21,22 @@ namespace Designer
             var mt2 = new Material(2, "Kleber", 50);
             var mt3 = new Material(3, "Schrauben", 50);
 
+            
+
             Operations.Add(new Operation(0, 0));
-            Operations.Add(new Operation().SetTask(1, 0, 5, Operations[0] , ma1, mt1, 10));
-            Operations.Add(new Operation().SetTask(2, 5, 10, Operations[1], ma1, mt1, 10));
-            Operations.Add(new Operation().SetTask(3, 14, -5, Operations[2], ma1, mt3, 30));
+            lm.Add(mt1); lm.Add(mt2);
+            lq.Add(10); lq.Add(20);
+            Operations.Add(new Operation().SetTask(1, 0, 5, Operations[0],ma1, lm, lq));
+
+            lm.Clear(); lq.Clear();
+            lm.Add(mt1); lm.Add(mt3);
+            lq.Add(10); lq.Add(20);
+            Operations.Add(new Operation().SetTask(2, 5, 10, Operations[1],ma1, lm, lq));
+            
+            lm.Clear(); lq.Clear();
+            lm.Add(mt3); lm.Add(mt2);
+            lq.Add(30); lq.Add(10);
+            Operations.Add(new Operation().SetTask(3, 14, -5, Operations[2],ma1, lm, lq));
 
         }
     }
@@ -35,8 +49,8 @@ namespace Designer
         private int Duration { get; set; } = 0;
         private Operation _predecessor;
         private Machine _machId;
-        private Material _matId;
-        private int Quant { get; set; } = 0;
+        private List<Material> _mats;
+        private List<int> Quants { get; set; }
 
         public Operation()
         {
@@ -50,7 +64,7 @@ namespace Designer
             EndTime = StartTime;
         } 
 
-        public Operation SetTask(int id, int startTime, int duration, Operation predecessor, Machine machId, Material mat, int quant)
+        public Operation SetTask(int id, int startTime, int duration, Operation predecessor, Machine machId, List<Material> mats, List<int> quants)
         {
             Id = id;
             StartTime = startTime;
@@ -58,13 +72,20 @@ namespace Designer
             EndTime = StartTime + Duration;
             this._machId = machId;
             this._predecessor = predecessor;
-            this._matId = mat;
-            Quant = quant; 
+
+            this._mats = mats;
+            Quants = quants; 
                            
-            Console.WriteLine("setTask::\tid:{0};\tstartTime{1};\tduration:{2};\tendTime:{3}", Id, StartTime, Duration,EndTime);
+            Console.WriteLine("setTask::\tOperation id:{0}\tStart Time:{1}\tDuration:{2}\tEnd Time:{3}", Id, StartTime, Duration,EndTime);
 
             this._machId.SetEntry(this);
-            this._matId.SetReservation(this); 
+            
+            for (int i = 0; i < _mats.Count; i++){
+                mats[i].SetReservation(this,Quants[i]);
+                //Ist Quatsch weil die Material ID private ist
+                //Console.WriteLine("\t\t{0}. material with quantity {1}.",i+1,Quants[i]);
+            }
+            
             return this;
         }
     }
@@ -94,7 +115,8 @@ namespace Designer
         private int Id { get; set;  }
         private string Name { get; set; }
         private int Quantity { get; set; }
-        private List<Operation> Reservation { get; set; } = new List<Operation>();
+        private List<Operation> ReservationOp { get; set; } = new List<Operation>();
+        private List<int> ReservationQu {get; set; } = new List<int>();
 
         public Material(int id, string name, int quant)
         {
@@ -103,9 +125,10 @@ namespace Designer
             Quantity = quant;
         }
 
-        public void SetReservation(Operation op)
+        public void SetReservation(Operation op, int q)
         {
-            Reservation.Add(op); 
+            ReservationOp.Add(op);
+            ReservationQu.Add(q);
         }
 
 

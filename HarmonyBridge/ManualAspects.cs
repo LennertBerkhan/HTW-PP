@@ -259,12 +259,12 @@ namespace HarmonyBridge
         {
             Console.ForegroundColor = ConsoleColor.DarkRed;
             var quant = Tools.GetValue(__instance, "Quantity");
-            var list = Tools.GetValue(__instance, "Reservation"); 
-            foreach(var o in list)
+            var listOp = Tools.GetValue(__instance, "ReservationOp");
+            List<int> listQu = Tools.GetValue(__instance, "ReservationQu");
+
+            if (listQu.Sum() > quant)
             {
-                quant = quant - Tools.GetValue(o,"Quant"); 
-                if (quant < 0) { Console.WriteLine("Planning Error: Not enough material {0} left for operation {1}.",Tools.GetValue(__instance, "Id"),Tools.GetValue(o, "Id") );  }
-                
+                Console.WriteLine("Planning Error: Not enough material {0} left for operation {1}.", Tools.GetValue(__instance, "Id"), Tools.GetValue(listOp[listOp.Count-1], "Id"));
             }
 
             Console.ForegroundColor = ConsoleColor.White;
