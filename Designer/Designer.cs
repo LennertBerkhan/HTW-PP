@@ -24,9 +24,10 @@ namespace Designer
             
 
             Operations.Add(new Operation(0, 0));
-            lm.Add(mt1); lm.Add(mt2);
-            lq.Add(10); lq.Add(20);
-            Operations.Add(new Operation().SetTask(1, 0, 5, Operations[0],ma1, lm, lq));
+            var requiredItems = new List<Tuple<Material, int>> ();
+            requiredItems.Add(new Tuple<Material, int> (mt1, 10));
+            requiredItems.Add(new Tuple<Material, int>(mt2, 20));
+            Operations.Add(new Operation().SetTask(1, 0, 5, Operations[0],ma1, requiredItems));
 
             lm.Clear(); lq.Clear();
             lm.Add(mt1); lm.Add(mt3);
@@ -49,8 +50,7 @@ namespace Designer
         private int Duration { get; set; } = 0;
         private Operation _predecessor;
         private Machine _machId;
-        private List<Material> _mats;
-        private List<int> Quants { get; set; }
+        private List<Tuple<Material, int>> _requiredMaterial { get ; set; }
 
         public Operation()
         {
@@ -64,7 +64,7 @@ namespace Designer
             EndTime = StartTime;
         } 
 
-        public Operation SetTask(int id, int startTime, int duration, Operation predecessor, Machine machId, List<Material> mats, List<int> quants)
+        public Operation SetTask(int id, int startTime, int duration, Operation predecessor, Machine machId, List<Tuple<Material, int>> requiredMaterials)
         {
             Id = id;
             StartTime = startTime;
