@@ -8,8 +8,7 @@ namespace Designer
         private int ProductionTime { get; set; } = 16;  // Zeitspanne für Produktionsplan 
 
         private List<Operation> Operations { get; set; } = new List<Operation>();
-        private List<Material> lm = new List<Material>();
-        private List<int> lq = new List<int>();
+        private List<Tuple<Material, int>> mats = new List<Tuple<Material, int>>();
 
         public void Plan()
         {
@@ -24,20 +23,23 @@ namespace Designer
             
 
             Operations.Add(new Operation(0, 0));
-            var requiredItems = new List<Tuple<Material, int>> ();
-            requiredItems.Add(new Tuple<Material, int> (mt1, 10));
-            requiredItems.Add(new Tuple<Material, int>(mt2, 20));
+            var requiredItems = new List<Tuple<Material, int>>
+            {
+                new Tuple<Material, int>(mt1, 10), new Tuple<Material, int>(mt2, 20)
+            };
             Operations.Add(new Operation().SetTask(1, 0, 5, Operations[0],ma1, requiredItems));
 
-            lm.Clear(); lq.Clear();
-            lm.Add(mt1); lm.Add(mt3);
-            lq.Add(10); lq.Add(20);
-            Operations.Add(new Operation().SetTask(2, 5, 10, Operations[1],ma1, lm, lq));
-            
-            lm.Clear(); lq.Clear();
-            lm.Add(mt3); lm.Add(mt2);
-            lq.Add(30); lq.Add(10);
-            Operations.Add(new Operation().SetTask(3, 14, -5, Operations[2],ma1, lm, lq));
+            mats = new List<Tuple<Material, int>>
+            {
+                new Tuple<Material, int>(mt1, 10), new Tuple<Material, int>(mt3, 20)
+            };
+            Operations.Add(new Operation().SetTask(2, 5, 10, Operations[1],ma1, mats));
+
+            mats = new List<Tuple<Material, int>>
+            {
+                new Tuple<Material, int>(mt3, 30), new Tuple<Material, int>(mt2, 10)
+            };
+            Operations.Add(new Operation().SetTask(3, 14, -5, Operations[2],ma1, mats));
 
         }
     }
@@ -73,17 +75,14 @@ namespace Designer
             this._machId = machId;
             this._predecessor = predecessor;
 
-            this._mats = mats;
-            Quants = quants; 
+            _requiredMaterial = requiredMaterials;
                            
             Console.WriteLine("setTask::\tOperation id:{0}\tStart Time:{1}\tDuration:{2}\tEnd Time:{3}", Id, StartTime, Duration,EndTime);
 
             this._machId.SetEntry(this);
             
-            for (int i = 0; i < _mats.Count; i++){
-                mats[i].SetReservation(this,Quants[i]);
-                //Ist Quatsch weil die Material ID private ist
-                //Console.WriteLine("\t\t{0}. material with quantity {1}.",i+1,Quants[i]);
+            for (int i = 0; i < requiredMaterials.Count; i++){
+                requiredMaterials[i].Item1.AddReservation(new Reservation(this,requiredMaterials[i].Item2));
             }
             
             return this;
@@ -110,14 +109,25 @@ namespace Designer
         }
     }
 
+    public class Reservation
+    {
+        public Reservation(Operation operation, int quantity)
+        {
+            Operation = operation;
+            Quantity = quantity;
+        }
+
+        public Operation Operation { get; set; }
+        public int Quantity { get; set; }
+    }
+
     public class Material
     {
         private int Id { get; set;  }
         private string Name { get; set; }
         private int Quantity { get; set; }
-        private List<Operation> ReservationOp { get; set; } = new List<Operation>();
-        private List<int> ReservationQu {get; set; } = new List<int>();
-
+        
+        private List<Reservation> Reservations { get; set; } = new List<Reservation>();
         public Material(int id, string name, int quant)
         {
             Id = id;
@@ -125,10 +135,9 @@ namespace Designer
             Quantity = quant;
         }
 
-        public void SetReservation(Operation op, int q)
+        public void AddReservation(Reservation res)
         {
-            ReservationOp.Add(op);
-            ReservationQu.Add(q);
+            Reservations.Add(res);
         }
 
 
