@@ -128,6 +128,7 @@ namespace HarmonyBridge
             List<Operation> workload = Tools.GetValue(__instance, "Workload");
             int startTimeToAdd = Tools.GetValue(op, "StartTime");
 
+            
             foreach (var o in workload)
             {
                 int startTime = Tools.GetValue(o, "StartTime");

@@ -13,42 +13,34 @@ namespace AspectTester
 {
     public class Tests
     {
+        public static void Main(string[] args)
+        {
+            var test = new Tests();
+            test.RunAspectTests();
+        }
+
         [Fact]
         private void RunAspectTests()
         {
             var planner = new Planner();
-            
+
+            var ocls = new List<string>();
+            ocls.Add("context Operation::SetTask() pre OverlappingProdTime: startTime >= predecessor.EndTime");
+            ocls.Add("context Operation::SetTask() pre DurationNotNegativ: duration >= 0");
+            ocls.Add("context Machine::SetEntry(op: Operation) pre StartTimeCollision: self.Workload->forAll(v|v.StartTime < op.StartTime and v.EndTime > op.StartTime)");
+            ocls.Add("context Machine::SetEntry(op: Operation) pre EndTimeCollision: self.Workload->forAll(v|v.StartTime < op.EndTime and v.EndTime > op.EndTime)");
+            // ocls.Add("context Machine::SetEntry() post CapacityCheck: self.Workload.collect(wl|wl.Duration).sum() <= self.Capacity");
+            // ocls.Add("context Planner::Plan() post CheckProductionTime: self.Operations.collect(wl|wl.Duration).sum() <= self.ProductionTime");
+
             var gens = new List<CodeGenerator>();
-            gens.Add(OverlappingProdTimeTest());
-            gens.Add(DurationNotNegativeTest());
+            foreach (var ocl in ocls)
+                gens.Add(GenCode(Aspect.OclToAspect(ocl)));
+
 
             planner.Plan();
 
-            Assert.DoesNotContain(gens, gen => gen.HasPlanningError);
+            // Assert.DoesNotContain(gens, gen => gen.HasPlanningError);
         }
-        private CodeGenerator OverlappingProdTimeTest()
-        {
-            var aspect = Aspect.OclToAspect("context Operation::SetTask() pre: startTime >= predecessor.EndTime");
-            return GenCode(aspect);
-        }
-
-        private CodeGenerator DurationNotNegativeTest()
-        {
-            var aspect = Aspect.OclToAspect("context Operation::SetTask() pre: duration >= 0");
-            return GenCode(aspect);
-        }
-        
-        // private CodeGenerator DurationNotNegativeTest()
-        // {
-        //     var a = new Aspect
-        //     {
-        //         ContextName = "Designer.Operation",
-        //         FunctionName = "SetTask",
-        //         BeforeCode = "duration >= 0",
-        //         AfterCode = "true"
-        //     };
-        //     RunAspectTest(a);
-        // }
 
         public Tests()
         {
@@ -57,36 +49,17 @@ namespace AspectTester
 
         private static Assembly _assembly;
 
-
-        private static System.Type ContextNameToType(string ctxName)
-        {
-            return _assembly.GetType(ctxName, true);
-        }
-
         [MethodImpl(MethodImplOptions.NoInlining)]
         private CodeGenerator GenCode(Aspect aspect)
         {
-            string aspectName = GetCurrentTestName();
-            Console.WriteLine("AspectName: " + aspectName);
-            System.Type ctx = ContextNameToType(aspect.ContextName);
-            Console.WriteLine("ContextName: " + ctx.ToString());
+            Console.WriteLine("Aspect: " + aspect.ToString());
 
-            var cgen = new CodeGenerator(
-                aspectName,
-                ctx,
-                aspect
+            var gen = new CodeGenerator(
+                aspect,
+                _assembly
             );
-            cgen.InvokeApplyMethod();
-            return cgen;
-        }
-
-        [MethodImpl(MethodImplOptions.NoInlining)]
-        private static string GetCurrentTestName()
-        {
-            var st = new StackTrace();
-            var sf = st.GetFrame(2);
-
-            return sf.GetMethod().Name;
+            gen.InvokeApplyMethod();
+            return gen;
         }
     }
 }

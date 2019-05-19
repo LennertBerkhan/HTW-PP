@@ -3,6 +3,7 @@ using System.CodeDom.Compiler;
 using Microsoft.CSharp;
 using Harmony;
 using System.Reflection;
+using Designer;
 
 namespace HarmonyBridge
 {
@@ -30,7 +31,8 @@ namespace HarmonyBridge
         private readonly Options _options;
         private readonly dynamic _runtimeCode;
 
-        public CodeGenerator(string className, System.Type ctx, Aspect aspect) : this(new Options(className, ctx,
+        public CodeGenerator(Aspect aspect, Assembly target) : this(new Options(aspect.ConstraintName,
+            ContextNameToType(target, aspect.ContextName),
             aspect.FunctionName, aspect.BeforeCode, aspect.AfterCode))
         {
         }
@@ -54,12 +56,15 @@ namespace HarmonyBridge
             param.ReferencedAssemblies.Add("System.Xml.Linq.dll");
             param.ReferencedAssemblies.Add("0Harmony.dll");
             param.ReferencedAssemblies.Add(typeof(HarmonyInstance).Assembly.Location);
+            param.ReferencedAssemblies.Add(typeof(Operation).Assembly.Location);
             param.ReferencedAssemblies.Add("Microsoft.CSharp.dll");
             // param.ReferencedAssemblies.Add("Designer.dll"); // new System.Uri(System.Reflection.Assembly.GetExecutingAssembly().EscapedCodeBase).LocalPath);
 
             var codeProvider = new CSharpCodeProvider();
             var code = GenerateCodeString();
             var results = codeProvider.CompileAssemblyFromSource(param, code);
+
+            System.IO.File.WriteAllText("_generated.cs", code);
 
             if (!results.Errors.HasErrors)
             {
@@ -90,12 +95,50 @@ namespace HarmonyBridge
             foreach (var pi in original.GetParameters())
             {
                 var pt = pi.ParameterType.ToString();
-                if (!pt.StartsWith("System.Int"))
-                    pt = "dynamic";
+                int pos = -1;
+                while (true)
+                {
+                    pos = pt.IndexOf("`", StringComparison.Ordinal);
+                    if (pos > 0)
+                        pt = pt.Remove(pos, 2);
+                    else break;
+                }
+
+                pos = -1;
+                while (true)
+                {
+                    pos = pt.IndexOf("[", StringComparison.Ordinal);
+                    if (pos > 0)
+                        pt = pt.Substring(0, pos) + "<" + pt.Substring(pos + 1);
+                    else break;
+                }
+                pos = -1;
+                while (true)
+                {
+                    pos = pt.IndexOf("]", StringComparison.Ordinal);
+                    if (pos > 0)
+                        pt = pt.Substring(0, pos) + ">" + pt.Substring(pos + 1);
+                    else break;
+                }
+                // if (!pt.StartsWith("System.Int"))
+                // {
+                //     if (pt.StartsWith("List<"))
+                //     {
+                //         pt = "List<dynamic>";
+                //     }
+                //     else
+                //         pt = "dynamic";
+                // }
+
                 args += ", " + pt + " " + pi.Name;
             }
 
             return args;
+        }
+
+        private static System.Type ContextNameToType(Assembly assembly, string ctxName)
+        {
+            return assembly.GetType(ctxName, true);
         }
 
         public void InvokeApplyMethod()
@@ -126,7 +169,9 @@ namespace HarmonyBridge
             return @"
 using Harmony;
 using System;
+using Designer;
 using System.Reflection;
+using System.Linq;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
@@ -189,7 +234,22 @@ private static ConditionalWeakTable<object, object> oset = new ConditionalWeakTa
             HasPlanningError = true;
         }
 
-        public static dynamic GetValue(dynamic instance, string variableName)
+        
+    }
+
+
+public static class Extensions
+{
+public static List<dynamic>CastToList(this object self)
+{
+    return (List<dynamic>) self; // as List<dynamic>;
+}
+
+    public static bool CastAll(this object source, Func<object, bool> predicate)
+    {
+return (source as List<dynamic>).All(predicate);
+}
+public static dynamic GetValue(this object instance, string variableName)
         {
             PropertyInfo prop = instance.GetType().GetProperty(variableName,
                 BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.GetProperty);
@@ -197,7 +257,16 @@ private static ConditionalWeakTable<object, object> oset = new ConditionalWeakTa
             var workload = methInf.Invoke(instance, null);
             return workload;
         }
-    }
+public static List<dynamic>Cast(this object self, Type innerType)
+{
+    var methodInfo = typeof (Enumerable).GetMethod(""Cast"");
+    var genericMethod = methodInfo.MakeGenericMethod(innerType);
+    return genericMethod.Invoke(null, new [] {self}) as List<dynamic>;
+}
+} 
+
+
+
 }
             ";
         }

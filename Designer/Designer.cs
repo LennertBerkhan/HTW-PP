@@ -81,8 +81,9 @@ namespace Designer
 
             this._machId.SetEntry(this);
             
-            for (int i = 0; i < requiredMaterials.Count; i++){
-                requiredMaterials[i].Item1.AddReservation(new Reservation(this,requiredMaterials[i].Item2));
+            foreach (var (mat, requiredCount) in requiredMaterials)
+            {
+                 mat.AddReservation(new Reservation(this,  requiredCount));
             }
             
             return this;
