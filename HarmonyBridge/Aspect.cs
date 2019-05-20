@@ -40,7 +40,7 @@ namespace HarmonyBridge
 
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this);
+            return JsonConvert.SerializeObject(this, Formatting.Indented).ToString();
         }
 
         public static bool IsLinux
