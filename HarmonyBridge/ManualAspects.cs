@@ -245,7 +245,7 @@ namespace HarmonyBridge
         public static bool Apply()
         {
             var harmony = HarmonyInstance.Create("CheckMaterialQuantity");
-            var original = typeof(Material).GetMethod("SetReservation");
+            var original = typeof(Material).GetMethod("AddReservation");
             var prefix = typeof(CheckMaterialQuantity).GetMethod("BeforeCall");
             var postfix = typeof(CheckMaterialQuantity).GetMethod("AfterCall");
             harmony.Patch(original, new HarmonyMethod(prefix), new HarmonyMethod(postfix));
@@ -261,13 +261,12 @@ namespace HarmonyBridge
         public static void AfterCall(CheckMaterialQuantity __instance)
         {
             Console.ForegroundColor = ConsoleColor.DarkRed;
+            List<Reservation> Reservations = Tools.GetValue(__instance, "Reservations");
             var quant = Tools.GetValue(__instance, "Quantity");
-            var listOp = Tools.GetValue(__instance, "ReservationOp");
-            List<int> listQu = Tools.GetValue(__instance, "ReservationQu");
 
-            if (listQu.Sum() > quant)
+            if (Reservations.Sum(op => Tools.GetValue(op, "Quantity")) > quant)
             {
-                Console.WriteLine("Planning Error: Not enough material {0} left for operation {1}.", Tools.GetValue(__instance, "Id"), Tools.GetValue(listOp[listOp.Count-1], "Id"));
+                Console.WriteLine("Planning Error: Not enough material {0} left for operation {1}.", Tools.GetValue(__instance, "Id"), Tools.GetValue(Tools.GetValue(Reservations[Reservations.Count - 1], "Operation"),"Id"));
             }
 
             Console.ForegroundColor = ConsoleColor.White;

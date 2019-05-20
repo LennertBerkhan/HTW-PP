@@ -112,14 +112,14 @@ namespace Designer
 
     public class Reservation
     {
+        private Operation Operation { get; set; }
+        private int Quantity { get; set; }
+
         public Reservation(Operation operation, int quantity)
         {
             Operation = operation;
             Quantity = quantity;
         }
-
-        public Operation Operation { get; set; }
-        public int Quantity { get; set; }
     }
 
     public class Material
