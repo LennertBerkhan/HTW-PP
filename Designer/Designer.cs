@@ -7,7 +7,7 @@ namespace Designer
     {
         private int ProductionTime { get; set; } = 16;  // Zeitspanne für Produktionsplan 
 
-        private List<Operation> Operations { get; set; } = new List<Operation>();
+        private List<Operation> Operations { get; } = new List<Operation>();
         private List<Tuple<Material, int>> mats = new List<Tuple<Material, int>>();
 
         public void Plan()
@@ -23,21 +23,24 @@ namespace Designer
             
 
             Operations.Add(new Operation(0, 0));
-            var requiredItems = new List<Tuple<Material, int>>
+            mats = new List<Tuple<Material, int>>
             {
-                new Tuple<Material, int>(mt1, 10), new Tuple<Material, int>(mt2, 20)
+                new Tuple<Material, int>(mt1, 10),
+                new Tuple<Material, int>(mt2, 20)
             };
-            Operations.Add(new Operation().SetTask(1, 0, 5, Operations[0],ma1, requiredItems));
+            Operations.Add(new Operation().SetTask(1, 0, 5, Operations[0],ma1, mats));
 
             mats = new List<Tuple<Material, int>>
             {
-                new Tuple<Material, int>(mt1, 10), new Tuple<Material, int>(mt3, 20)
+                new Tuple<Material, int>(mt1, 10),
+                new Tuple<Material, int>(mt3, 20)
             };
             Operations.Add(new Operation().SetTask(2, 5, 10, Operations[1],ma1, mats));
 
             mats = new List<Tuple<Material, int>>
             {
-                new Tuple<Material, int>(mt3, 30), new Tuple<Material, int>(mt2, 10)
+                new Tuple<Material, int>(mt3, 30),
+                new Tuple<Material, int>(mt2, 10)
             };
             Operations.Add(new Operation().SetTask(3, 14, -5, Operations[2],ma1, mats));
 
@@ -95,7 +98,7 @@ namespace Designer
         private int Id { get; set; }
         private string Name { get; set; }
         private int Capacity { get; set; }
-        private List<Operation> Workload { get; set; } = new List<Operation>();
+        private List<Operation> Workload { get; } = new List<Operation>();
 
         public Machine(int id, string name, int capa)
         {

@@ -29,7 +29,7 @@ namespace AspectTester
             ocls.Add("context Operation::SetTask() pre DurationNotNegativ: duration >= 0");
             ocls.Add("context Machine::SetEntry(op: Operation) pre StartTimeCollision: self.Workload->forAll(v|v.StartTime < op.StartTime and v.EndTime > op.StartTime)");
             ocls.Add("context Machine::SetEntry(op: Operation) pre EndTimeCollision: self.Workload->forAll(v|v.StartTime < op.EndTime and v.EndTime > op.EndTime)");
-            // ocls.Add("context Machine::SetEntry() post CapacityCheck: self.Workload.collect(wl|wl.Duration).sum() <= self.Capacity");
+            ocls.Add("context Machine::SetEntry() post CapacityCheck: self.Workload.collect(wl|wl.Duration).sum() <= self.Capacity");
             // ocls.Add("context Planner::Plan() post CheckProductionTime: self.Operations.collect(wl|wl.Duration).sum() <= self.ProductionTime");
 
             var gens = new List<CodeGenerator>();
@@ -37,7 +37,15 @@ namespace AspectTester
                 gens.Add(GenCode(Aspect.OclToAspect(ocl)));
 
 
-            planner.Plan();
+            try
+            {
+                planner.Plan();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Plan Exception: " + e.ToString());
+            }
+
 
             // Assert.DoesNotContain(gens, gen => gen.HasPlanningError);
         }
