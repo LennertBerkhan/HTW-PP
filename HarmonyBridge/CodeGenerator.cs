@@ -46,7 +46,7 @@ namespace HarmonyBridge
             {
                 GenerateExecutable = false,
                 IncludeDebugInformation = true,
-                GenerateInMemory = true
+                GenerateInMemory = false
             };
 
             param.ReferencedAssemblies.Add("System.dll");

@@ -15,8 +15,32 @@ namespace AspectTester
     {
         public static void Main(string[] args)
         {
-            var test = new Tests();
-            test.RunAspectTests();
+            if (args.Length >= 1 && args[0] == "manual")
+            {
+                var planner = new Planner();
+                Console.WriteLine("Output without Harmony/Aspects");
+                planner.Plan();
+
+
+                Console.ReadLine();
+                if (!DurationNotNegativ.Apply()) throw new Exception("Applying aspect failed");
+                if (!OverlappingProdTime.Apply()) throw new Exception("Applying aspect failed");
+                if (!StartTimeCollision.Apply()) throw new Exception("Applying aspect failed");
+                if (!EndTimeCollision.Apply()) throw new Exception("Applying aspect failed");
+                if (!CapacityCheck.Apply()) throw new Exception("Applying aspect failed");
+                if (!CheckMaterialQuantity.Apply()) throw new Exception("Applying aspect failed");
+                if (!CheckProductionTime.Apply()) throw new Exception("Applying aspect failed");
+
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("\nOutput with Harmony/Aspects");
+                var planner1 = new Planner();
+                planner1.Plan();
+            }
+            else
+            {
+                var test = new Tests();
+                test.RunAspectTests();
+            }
         }
 
         [Fact]
@@ -27,9 +51,12 @@ namespace AspectTester
             var ocls = new List<string>();
             ocls.Add("context Operation::SetTask() pre OverlappingProdTime: startTime >= predecessor.EndTime");
             ocls.Add("context Operation::SetTask() pre DurationNotNegativ: duration >= 0");
-            ocls.Add("context Machine::SetEntry(op: Operation) pre StartTimeCollision: self.Workload->forAll(v|v.StartTime < op.StartTime and v.EndTime > op.StartTime)");
-            ocls.Add("context Machine::SetEntry(op: Operation) pre EndTimeCollision: self.Workload->forAll(v|v.StartTime < op.EndTime and v.EndTime > op.EndTime)");
-            ocls.Add("context Machine::SetEntry() post CapacityCheck: self.Workload.collect(wl|wl.Duration).sum() <= self.Capacity");
+            ocls.Add(
+                "context Machine::SetEntry(op: Operation) pre StartTimeCollision: self.Workload->forAll(v|v.StartTime < op.StartTime and v.EndTime > op.StartTime)");
+            ocls.Add(
+                "context Machine::SetEntry(op: Operation) pre EndTimeCollision: self.Workload->forAll(v|v.StartTime < op.EndTime and v.EndTime > op.EndTime)");
+            ocls.Add(
+                "context Machine::SetEntry() post CapacityCheck: self.Workload.collect(wl|wl.Duration).sum() <= self.Capacity");
             // ocls.Add("context Planner::Plan() post CheckProductionTime: self.Operations.collect(wl|wl.Duration).sum() <= self.ProductionTime");
 
             var gens = new List<CodeGenerator>();
