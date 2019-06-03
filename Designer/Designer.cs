@@ -16,7 +16,7 @@ namespace Designer
             var ma1 = new Machine(1, "Bohrer", 15);
             var ma2 = new Machine(2, "Fräser", 10);
 
-            var mt1 = new Material(1, "Holz", 10); 
+            var mt1 = new Material(1, "Holzbrett", 15); 
             var mt2 = new Material(2, "Kleber", 50);
             var mt3 = new Material(3, "Schrauben", 50);
 
@@ -29,6 +29,8 @@ namespace Designer
                 new Tuple<Material, int>(mt2, 20)
             };
             Operations.Add(new Operation().SetTask(1, 0, 5, Operations[0],ma1, mats));
+            Console.WriteLine("\t\tReserve 10 from material Holzbrett");
+            Console.WriteLine("\t\tReserve 20 from material Kleber\n");
 
             mats = new List<Tuple<Material, int>>
             {
@@ -36,6 +38,9 @@ namespace Designer
                 new Tuple<Material, int>(mt3, 20)
             };
             Operations.Add(new Operation().SetTask(2, 5, 10, Operations[1],ma1, mats));
+            Console.WriteLine("\t\tReserve 10 from material Holzbrett");
+            Console.WriteLine("\t\tReserve 20 from material Schrauben\n");
+
 
             mats = new List<Tuple<Material, int>>
             {
@@ -43,6 +48,8 @@ namespace Designer
                 new Tuple<Material, int>(mt2, 10)
             };
             Operations.Add(new Operation().SetTask(3, 14, -5, Operations[2],ma1, mats));
+            Console.WriteLine("\t\tReserve 30 from material Schrauben");
+            Console.WriteLine("\t\tReserve 20 from material Kleber\n");
 
         }
     }
@@ -137,6 +144,8 @@ namespace Designer
             Id = id;
             Name = name;
             Quantity = quant;
+
+            Console.WriteLine("Stock for material \t{0}: \t{1}",Name,Quantity);
         }
 
         public void AddReservation(Reservation res)
