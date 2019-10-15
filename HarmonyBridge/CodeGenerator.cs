@@ -245,10 +245,10 @@ public static List<dynamic>CastToList(this object self)
     return (List<dynamic>) self; // as List<dynamic>;
 }
 
-    public static bool CastAll(this object source, Func<object, bool> predicate)
-    {
-return (source as List<dynamic>).All(predicate);
-}
+//     public static bool CastAll(this object source, Func<object, bool> predicate)
+//     {
+// return (source as List<dynamic>).All(predicate);
+// }
 public static dynamic GetValue(this object instance, string variableName)
         {
             PropertyInfo prop = instance.GetType().GetProperty(variableName,
