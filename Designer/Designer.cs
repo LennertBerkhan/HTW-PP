@@ -20,7 +20,6 @@ namespace Designer
             var mt2 = new Material(2, "Kleber", 50);
             var mt3 = new Material(3, "Schrauben", 50);
 
-            
 
             Operations.Add(new Operation(0, 0));
             mats = new List<Tuple<Material, int>>
@@ -57,9 +56,9 @@ namespace Designer
     public class Operation
     {
         private int Id { get; set; }
-        private int StartTime { get; set; } = 0;
-        private int EndTime { get; set; } = 0;
-        private int Duration { get; set; } = 0;
+        public int StartTime { get; set; } = 0;
+        public int EndTime { get; set; } = 0;
+        public int Duration { get; set; } = 0;
         private Operation _predecessor;
         private Machine _machId;
         private List<Tuple<Material, int>> _requiredMaterial { get ; set; }

@@ -34,6 +34,7 @@ namespace HarmonyBridge
             p.WaitForExit();
 
             var deserializedAspect = JsonConvert.DeserializeObject<Aspect>(json);
+
             deserializedAspect.ContextName = "Designer." + deserializedAspect.ContextName;
             return deserializedAspect;
         }

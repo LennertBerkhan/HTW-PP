@@ -77,8 +77,13 @@
       <Project>{88e185ba-b1b2-4265-9255-4dd10f6cbb7c}</Project>
       <Name>HarmonyBridge</Name>
     </ProjectReference>
+    <ProjectReference Include="..\OCL-Editer\OCL-Editer.csproj">
+      <Project>{39BF7EF5-3020-40B0-9950-63ABA5CE655E}</Project>
+      <Name>OCL-Editer</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="e1.ocl" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

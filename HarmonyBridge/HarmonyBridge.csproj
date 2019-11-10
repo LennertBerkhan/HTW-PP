@@ -69,7 +69,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Aspect.cs" />
     <Compile Include="CodeGenerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -81,6 +80,10 @@
     <ProjectReference Include="..\Designer\Designer.csproj">
       <Project>{ca00dd1f-e3f6-4d31-8743-35bc22bcf7fd}</Project>
       <Name>Designer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OCL-Editer\OCL-Editer.csproj">
+      <Project>{39BF7EF5-3020-40B0-9950-63ABA5CE655E}</Project>
+      <Name>OCL-Editer</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

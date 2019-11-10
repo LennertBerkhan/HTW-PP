@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -8,6 +9,8 @@ using Designer;
 using HarmonyBridge;
 using Newtonsoft.Json;
 using Xunit;
+using OCL;
+using OCL.Absyn;
 
 namespace AspectTester
 {
@@ -20,7 +23,6 @@ namespace AspectTester
                 var planner = new Planner();
                 Console.WriteLine("Output without Harmony/Aspects");
                 planner.Plan();
-
 
                 Console.ReadLine();
                 if (!DurationNotNegativ.Apply()) throw new Exception("Applying aspect failed");
@@ -46,17 +48,7 @@ namespace AspectTester
         [Fact]
         private void RunAspectTests()
         {
-            var ocls = new string[]
-            {
-                "context Operation::SetTask() pre OverlappingProdTime: startTime >= predecessor.EndTime",
-                "context Operation::SetTask() pre DurationNotNegativ: duration >= 0",
-                // "context Machine::SetEntry(op: Operation) pre StartTimeCollision: self.Workload->forAll(v|v.StartTime < op.StartTime and v.EndTime > op.StartTime)",
-                // "context Machine::SetEntry(op: Operation) pre EndTimeCollision: self.Workload->forAll(v|v.StartTime < op.EndTime and v.EndTime > op.EndTime)",
-                // "context Machine::SetEntry() post CapacityCheck: self.Workload.collect(wl|wl.Duration).sum() <= self.Capacity"
-                // "context Planner::Plan() post CheckProductionTime: self.Operations.collect(wl|wl.Duration).sum() <= self.ProductionTime"
-            };
-            if (ocls.Count() > 0)
-                CompileOCLs(ocls);
+            CompileOCLs();
 
             Console.WriteLine("Execute Planning program...");
             var planner = new Planner();
@@ -65,22 +57,14 @@ namespace AspectTester
             // Assert.DoesNotContain(gens, gen => gen.HasPlanningError);
         }
 
-        void CompileOCLs(string[] ocls)
+        void CompileOCLs()
         {
-            var aspects = new List<Aspect>();
-            foreach (var ocl in ocls)
-            {
-                Console.WriteLine();
-                Console.WriteLine("OCL: " + ocl);
-                var aspect = Aspect.OclToAspect(ocl);
-                Console.WriteLine("Aspect: " + aspect.ToString());
-                aspects.Add(aspect);
-            }
+            var aspects = Test.ScanFile("../../e1.ocl");
 
             Console.WriteLine();
 
             var gens = new List<CodeGenerator>();
-            foreach (var aspect in aspects)
+            foreach (Aspect aspect in aspects)
             {
                 Console.WriteLine("Generating assembly for " + aspect.ConstraintName + ".");
                 gens.Add(GenCode(aspect));
@@ -106,7 +90,7 @@ namespace AspectTester
         [MethodImpl(MethodImplOptions.NoInlining)]
         private CodeGenerator GenCode(Aspect aspect)
         {
-            // Console.WriteLine("Aspect: " + aspect.ToString());
+            //Console.WriteLine("Aspect: " + aspect.ToString());
 
             var gen = new CodeGenerator(
                 aspect,
