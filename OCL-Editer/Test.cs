@@ -18,8 +18,20 @@ namespace OCL
             Stream stream = File.OpenRead(file);
             Scanner scanner = Scanner.CreateScanner(stream);
             Parser parser = new Parser(scanner);
-            OCLfile parse_tree = parser.ParseOCLfile();
-            return AspectPrinter.Print(parse_tree);
+            try
+            {
+                OCLfile parse_tree = parser.ParseOCLfile();
+                return AspectPrinter.Print(parse_tree);
+            }
+            catch (Exception e)
+            {
+                Console.Out.WriteLine("Parse NOT Successful:");
+                Console.Out.WriteLine(e.Message);
+                Console.Out.WriteLine("");
+                Console.Out.WriteLine("Stack Trace:");
+                Console.Out.WriteLine(e.StackTrace);
+                return null;
+            }
         }
         //public static void Main(string[] args)
         //{
