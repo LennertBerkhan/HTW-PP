@@ -139,7 +139,7 @@ namespace HarmonyBridge
 
         private static System.Type ContextNameToType(Assembly assembly, string ctxName)
         {
-            return assembly.GetType(assembly.FullName.Split(',')[0] + "." + ctxName, true);
+            return assembly.GetType(ctxName, true);
         }
 
         public void InvokeApplyMethod()

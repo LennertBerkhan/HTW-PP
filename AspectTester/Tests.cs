@@ -66,7 +66,9 @@ namespace AspectTester
             var gens = new List<CodeGenerator>();
             foreach (Aspect aspect in aspects)
             {
+                aspect.ContextName = "Designer." + aspect.ContextName;
                 Console.WriteLine("Generating assembly for " + aspect.ConstraintName + ".");
+                aspect.Print();
                 gens.Add(GenCode(aspect));
             }
 
