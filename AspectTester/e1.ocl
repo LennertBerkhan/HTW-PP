@@ -1,4 +1,4 @@
 package Rules 
-	context Operation::SetTask() pre DurationNotNegativ: duration >= 0
-	context Operation::SetTask() pre OverlappingProdTime: startTime >= predecessor.EndTime
+	context Operation::SetTask() pre StartTimeCollision: machId.Workload->forAll(v|v.EndTime <= startTime)
+	context Operation::SetTask() pre StartVorEnd: machId.Workload->forAll(v1, v2|v1.StartTime < v2.EndTime)
 endpackage

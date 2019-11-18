@@ -87,9 +87,6 @@ namespace Designer
             _requiredMaterial = requiredMaterials;
                            
             Console.WriteLine("setTask::\tOperation id:{0}\tStart Time:{1}\tDuration:{2}\tEnd Time:{3}", Id, StartTime, Duration,EndTime);
-            
-            //bool bo = _machId.Workload.TrueForAll(v => v.StartTime < this.StartTime & v.EndTime <= this.StartTime);
-            //Console.WriteLine(bo);
 
             this._machId.SetEntry(this);
 
